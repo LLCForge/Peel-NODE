@@ -6,9 +6,22 @@ import { settings, update } from './settings.js';
 
 // Çalışma alanı: belgeler (sekmeler), sekme grupları, proje/arşiv yükleme ve oturum kaydı.
 
-const GROUP_COLORS = ['#f7df1e', '#4ade80', '#60a5fa', '#ff9f43', '#f472b6', '#2dd4bf', '#a3a3a3'];
+const GROUP_COLORS = ['#5FA04E', '#a78bfa', '#60a5fa', '#ff9f43', '#f472b6', '#2dd4bf', '#a3a3a3'];
 const MAX_FILE_BYTES = LIMITS.fileBytes;
 let seq = 0;
+
+// Node paket açıcı (src/node/unpack.js). Glob, dosya yoksa boş döner: o durumda zip eski yoldan açılır, ikili paketler uyarı verir.
+const UNPACKERS = import.meta.glob('../node/unpack.js');
+async function nodeUnpacker() {
+  const load = UNPACKERS['../node/unpack.js'];
+  return load ? (await load()).unpack : null;
+}
+// pkg/nexe/SEA çalıştırılabilirleri (PE, ELF, Mach-O), npm tarball'ı (gzip), bytenode .jsc, asar, zip
+const NODE_PKG_NAME = /\.(exe|jsc|tgz|asar|zip)$/;
+const isBinaryPkg = (b) => (b[0] === 0x4d && b[1] === 0x5a)
+  || (b[0] === 0x7f && b[1] === 0x45 && b[2] === 0x4c && b[3] === 0x46)
+  || ((b[0] === 0xcf || b[0] === 0xce) && b[1] === 0xfa && b[2] === 0xed && b[3] === 0xfe)
+  || (b[0] === 0x1f && b[1] === 0x8b);
 const uid = (p) => `${p}${Date.now().toString(36)}${(seq++).toString(36)}`;
 
 export function createWorkspace(app, tabbar) {
@@ -160,7 +173,13 @@ export function createWorkspace(app, tabbar) {
       try {
         const head = new Uint8Array(await f.slice(0, 16).arrayBuffer());
         const lower = f.name.toLowerCase();
-        if (isZip(head) || isCrx(head) || /\.(zip|crx)$/.test(lower)) {
+        const isPkg = !isCrx(head) && (isZip(head) || isBinaryPkg(head) || NODE_PKG_NAME.test(lower));
+        const unpack = isPkg ? await nodeUnpacker() : null;
+        if (unpack) {
+          loaded.push(...await openPackage(f, unpack));
+        } else if (isPkg && !isZip(head) && !lower.endsWith('.zip')) {
+          toast(t('pkg.noUnpacker', { n: f.name }), 'warn');
+        } else if (isZip(head) || isCrx(head) || /\.(zip|crx)$/.test(lower)) {
           let bytes = new Uint8Array(await f.arrayBuffer());
           if (isCrx(bytes)) bytes = crxToZip(bytes);
           const entries = (await readZip(bytes, isJsName)).slice(0, LIMITS.jsFiles);
@@ -199,6 +218,29 @@ export function createWorkspace(app, tabbar) {
     else render();
     app.persist();
     announce(t('ws.loaded', { n: loaded.length || loose.length }));
+  }
+
+  // Node paketi: dosyalar bir grupta sekme olur (giriş noktaları önce). Kaynağı olmayanlar (bytecode) boş durum bilgisi taşır.
+  async function openPackage(f, unpack) {
+    const res = await unpack(new Uint8Array(await f.arrayBuffer()), f.name);
+    const notes = Array.isArray(res?.notes) ? res.notes.map(String) : [];
+    for (const n of notes) app.log(`${f.name}: ${n}`, 'info');
+    const files = (Array.isArray(res?.files) ? res.files : [])
+      .filter((x) => x && typeof x.path === 'string')
+      .sort((a, b) => Number(Boolean(b.entry)) - Number(Boolean(a.entry)))
+      .slice(0, LIMITS.jsFiles);
+    if (!files.length) { toast(t('ws.noJs', { n: f.name }), 'warn'); return []; }
+    const g = newGroup(`${f.name} · ${res.kind ?? 'unknown'}`);
+    const docsOut = files.map((x) => {
+      const hasCode = typeof x.code === 'string';
+      const d = newDoc({ name: x.path.split('/').pop() || x.path, path: x.path, input: hasCode ? x.code : '', group: g.id });
+      // shortcut: pkg bilgisi oturuma kaydedilmez; yeniden yüklemede sekme sıradan boş durumla açılır
+      if (!hasCode) d.pkg = { kind: res.kind ?? 'unknown', note: typeof x.note === 'string' ? x.note : '', size: x.bytes?.length ?? 0, meta: res.meta ?? null, notes };
+      return d;
+    });
+    const runnable = docsOut.filter((d) => !d.pkg).length;
+    if (runnable > 1) offerBatch(g, runnable);
+    return docsOut;
   }
 
   async function offerBatch(g, n) {

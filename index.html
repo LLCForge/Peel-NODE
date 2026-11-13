@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="PEEL: open-source JavaScript deobfuscator that runs entirely in your browser. Your code never leaves your device.">
+  <meta name="description" content="PEEL: open-source Node.js deobfuscator. Unpacks pkg/nexe/SEA executables, npm packages and asar archives, and deobfuscates them entirely in your browser. Your code never leaves your device.">
   <meta name="theme-color" content="#0c0c0c">
   <meta name="color-scheme" content="dark light">
-  <meta property="og:title" content="PEEL · JS Deobfuscator">
-  <meta property="og:description" content="Open-source JavaScript deobfuscator. Runs in your browser, your code never leaves your device.">
+  <meta property="og:title" content="PEEL · Node.js Deobfuscator">
+  <meta property="og:description" content="Open-source Node.js deobfuscator. Runs in your browser, your code never leaves your device.">
   <meta property="og:image" content="/peel-logo-horizontal-dark-3000.png">
-  <title>PEEL · JS Deobfuscator</title>
+  <title>PEEL · Node.js Deobfuscator</title>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/peel-icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon-180.png">
@@ -24,7 +24,7 @@
       <img src="/peel-icon.svg" alt="" width="32" height="32">
       <span class="brand-text">
         <span class="wordmark" aria-hidden="true">pee<span>l</span></span>
-        <span class="brand-sub" data-i18n="brand.sub">JS DEOBFUSCATOR</span>
+        <span class="brand-sub" data-i18n="brand.sub">NODE.JS DEOBFUSCATOR</span>
       </span>
     </a>
     <div class="actions">
@@ -120,7 +120,7 @@
     <button type="button" id="btn-log" class="tiny" aria-expanded="false" aria-controls="log" data-i18n="action.log">Kayıt</button>
   </footer>
 
-  <input type="file" id="file" multiple accept=".js,.mjs,.cjs,.jsx,.txt,.zip,.crx,.har,.json" hidden>
+  <input type="file" id="file" multiple accept=".js,.mjs,.cjs,.jsx,.txt,.jsc,.exe,.tgz,.asar,.zip,.crx,.har,.json" hidden>
   <input type="file" id="folder" webkitdirectory multiple hidden>
   <input type="file" id="session-file" accept=".json,application/json" hidden>
   <script type="module" src="/src/main.js"></script>

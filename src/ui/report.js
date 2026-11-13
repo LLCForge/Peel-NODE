@@ -81,9 +81,10 @@ function threat(th, runtime, actions) {
   const dl = el('dl', { class: 'kv' });
   const row = (key, value) => dl.append(el('dt', {}, t(key)), el('dd', {}, value), el('dd', {}, ''));
   row('report.privacy.third', pv.thirdParties.join(', ') || '–');
-  row('report.privacy.cookies', t(pv.cookies ? 'yes' : 'no'));
-  row('report.privacy.storage', t(pv.storage ? 'yes' : 'no'));
-  row('report.privacy.fp', pv.fingerprinting.join(', ') || '–');
+  // tarayıcıya özgü gizlilik satırları (çerez, depolama, parmak izi) yalnızca bulgu varsa gösterilir
+  if (pv.cookies) row('report.privacy.cookies', t('yes'));
+  if (pv.storage) row('report.privacy.storage', t('yes'));
+  if (pv.fingerprinting.length) row('report.privacy.fp', pv.fingerprinting.join(', '));
   const post = runtime.post;
   if (post) {
     row('report.post.fired', `${post.fired} (${[...new Set(post.handlers)].join(', ') || '–'}; setInterval: ${post.timers})`);
@@ -245,9 +246,9 @@ export function renderReport(root, report, onExport, actions = {}) {
       runtime.network.length
         ? table(['API', 'Method', 'URL', 'Body'], runtime.network.map((n) => [n.api, n.method || '–', n.url, n.body || '–']), ['', '', 'mono', 'mono'])
         : muted('report.network.none')),
-    section('report.reads', runtime.reads.length
-      ? el('div', { class: 'chips' }, ...runtime.reads.slice(0, 80).map((r) => el('span', { class: 'chip' }, r.key, el('b', {}, String(r.count)))))
-      : muted('report.reads.none')),
+    // tarayıcı özelliği okuması yoksa (Node kodunda olağan) bölüm gizlenir
+    runtime.reads.length ? section('report.reads',
+      el('div', { class: 'chips' }, ...runtime.reads.slice(0, 80).map((r) => el('span', { class: 'chip' }, r.key, el('b', {}, String(r.count)))))) : null,
     section('report.apis', report.apis.length
       ? table(['API', '', '#'], report.apis.map((a) => [a.name, td(a.why), a.count]), ['mono', 'rep-muted', 'num'])
       : muted('report.apis.none')),

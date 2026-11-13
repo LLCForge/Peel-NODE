@@ -94,7 +94,7 @@ export function renderGraph(root, data) {
     selected = selected === id ? null : id;
     for (const l of lines) {
       const on = selected && (String(l.e.from) === selected || String(l.e.to) === selected);
-      l.p.style.color = on ? 'var(--accent, #f7df1e)' : 'var(--muted, #888)';
+      l.p.style.color = on ? 'var(--accent, #5FA04E)' : 'var(--muted, #888)';
       l.p.setAttribute('stroke-width', on ? '2.4' : '1.4');
     }
     for (const [id2, g] of groups) g.querySelector('circle').setAttribute('stroke-width', id2 === selected ? '3' : '1.5');
@@ -111,7 +111,7 @@ export function renderGraph(root, data) {
     const g = svg('g', { transform: `translate(${p.x} ${p.y})`, tabindex: '0', role: 'button', 'aria-label': `durum ${id}` });
     g.style.cursor = 'grab';
     const terminal = id === 'ÇIKIŞ' || id === 'GİRİŞ';
-    g.append(svg('circle', { r: String(R), fill: 'var(--panel, #1b1b1b)', stroke: terminal ? 'var(--accent, #f7df1e)' : 'var(--line-strong, #555)', 'stroke-width': '1.5' }));
+    g.append(svg('circle', { r: String(R), fill: 'var(--panel, #1b1b1b)', stroke: terminal ? 'var(--accent, #5FA04E)' : 'var(--line-strong, #555)', 'stroke-width': '1.5' }));
     const label = svg('text', { 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': '11', fill: 'var(--text, #eee)' });
     label.style.fontFamily = 'var(--mono, monospace)';
     label.textContent = id.length > 7 ? `${id.slice(0, 6)}…` : id;

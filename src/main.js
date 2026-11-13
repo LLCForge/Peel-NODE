@@ -170,7 +170,23 @@ function onTextChange(side) {
   clearTimeout(changeTimer);
   changeTimer = setTimeout(() => { refreshLayers(); if (activeTab === 'diff') selectTab('diff'); emit('change', side); }, 450);
 }
-const syncEmpty = () => { empty.hidden = edIn.length > 0; };
+// Kaynağı çıkarılamayan paket dosyası (pkg bytecode, bytenode .jsc): boş durum açıklama ve paket bilgisini gösterir
+let curPkg = null;
+const pkgInfo = h('dl', { class: 'empty-pkg kv' });
+empty.querySelector('.empty-body').after(pkgInfo);
+const syncEmpty = () => {
+  empty.hidden = edIn.length > 0;
+  const p = empty.hidden ? null : curPkg;
+  empty.classList.toggle('is-pkg', Boolean(p));
+  empty.querySelector('.empty-title').textContent = p ? t('pkg.noSource') : t('empty.title');
+  empty.querySelector('.empty-body').textContent = p ? (p.note || t('pkg.noSourceBody')) : t('empty.body');
+  const rows = p ? [[t('pkg.kind'), p.kind], [t('pkg.size'), `${p.size.toLocaleString()} B`],
+    ...Object.entries(p.meta && typeof p.meta === 'object' ? p.meta : {})
+      .filter(([, v]) => v != null && typeof v !== 'object').slice(0, 12).map(([k, v]) => [k, String(v)]),
+    ...p.notes.slice(0, 8).map((n) => [t('pkg.note'), n])] : [];
+  pkgInfo.replaceChildren(...rows.flatMap(([k, v]) => [h('dt', {}, k), h('dd', {}, v)]));
+  pkgInfo.hidden = !rows.length;
+};
 
 // ── çalışma alanı ──
 const ws = createWorkspace({
@@ -187,6 +203,7 @@ const ws = createWorkspace({
     doc.marks = { in: edIn.marks(), out: edOut.marks() };
   },
   load(doc) {
+    curPkg = doc.pkg ?? null;
     edIn.setState(doc.inState ?? edIn.createState(doc.input));
     edOut.setState(doc.outState ?? edOut.createState(doc.output));
     if (!doc.inState) edIn.resetMarks(doc.marks.in);
@@ -1155,6 +1172,7 @@ document.addEventListener('fullscreenchange', () => document.body.classList.togg
 
 function relabel() {
   applyI18n();
+  syncEmpty();
   const code = getLang();
   const lb = $('btn-lang');
   lb.textContent = code.toUpperCase();

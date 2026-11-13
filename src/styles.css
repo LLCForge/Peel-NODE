@@ -1,7 +1,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
 
-/* Marka: logodaki JS sarısı ve neredeyse siyah zemin. Sarı yalnızca eylem, seçim ve ilerleme için. */
+/* Marka: logodaki Node yeşili ve neredeyse siyah zemin. Yeşil yalnızca eylem, seçim ve ilerleme için.
+   Yeşil üzerinde beyaz metin AA'yı geçmez (#5FA04E: 3,2:1), bu yüzden vurgu üstü metin koyu (#0c0c0c: 6,2:1). */
 :root {
   --bg: #0c0c0c;
   --surface: #121212;
@@ -13,12 +14,12 @@ html, body { height: 100%; overflow: hidden; }
   --title: #ffffff;
   --muted: #9aa0ad;
   --faint: #7d8590;
-  --accent: #f7df1e;
-  --accent-hover: #fbe64b;
-  --accent-ink: #111111;
-  --accent-fg: #f7df1e;
-  --accent-soft: rgba(247, 223, 30, .1);
-  --accent-line: rgba(247, 223, 30, .45);
+  --accent: #5FA04E;
+  --accent-hover: #7CC35F;
+  --accent-ink: #0c0c0c;
+  --accent-fg: #7CC35F;
+  --accent-soft: rgba(95, 160, 78, .14);
+  --accent-line: rgba(95, 160, 78, .55);
   --ok: #4ade80;
   --warn: #ff9f43;
   --err: #ff6b5b;
@@ -27,16 +28,16 @@ html, body { height: 100%; overflow: hidden; }
   --overlay: rgba(12, 12, 12, .88);
   --shadow: 0 12px 40px rgba(0, 0, 0, .55);
   /* editör */
-  --sel: rgba(247, 223, 30, .22);
+  --sel: rgba(95, 160, 78, .3);
   --active-line: rgba(255, 255, 255, .035);
-  --bracket: rgba(247, 223, 30, .16);
-  --hit: rgba(247, 223, 30, .18);
-  --hit-strong: rgba(247, 223, 30, .4);
+  --bracket: rgba(95, 160, 78, .22);
+  --hit: rgba(95, 160, 78, .24);
+  --hit-strong: rgba(95, 160, 78, .5);
   --minimap-view: rgba(255, 255, 255, .08);
   --guide: rgba(255, 255, 255, .07);
   --syn-kw: #ff7b72;
   --syn-str: #a5d6ff;
-  --syn-num: #f7df1e;
+  --syn-num: #56d4dd;
   --syn-com: #7d8590;
   --syn-fn: #d2a8ff;
   --syn-def: #ffa657;
@@ -45,13 +46,13 @@ html, body { height: 100%; overflow: hidden; }
   --syn-op: #c9d1d9;
   /* kapsam renkleri (E297) */
   --scope-0: #79c0ff; --scope-1: #7ee787; --scope-2: #ffa657; --scope-3: #d2a8ff;
-  --scope-4: #ff7b72; --scope-5: #56d4dd; --scope-6: #f7df1e; --scope-7: #f692ce;
+  --scope-4: #ff7b72; --scope-5: #56d4dd; --scope-6: #5FA04E; --scope-7: #f692ce;
   /* grafikler */
-  --chart-1: #f7df1e;
+  --chart-1: #5FA04E;
   --chart-2: #79c0ff;
   --chart-3: #ff7b72;
-  --chart-4: #7ee787;
-  --chart-heat: #f7df1e;
+  --chart-4: #d2a8ff;
+  --chart-heat: #5FA04E;
   --sans: "Inter Variable", "Segoe UI", system-ui, sans-serif;
   --mono: "JetBrains Mono Variable", "Cascadia Code", Consolas, monospace;
   --ease: cubic-bezier(.16, 1, .3, 1);
@@ -59,7 +60,7 @@ html, body { height: 100%; overflow: hidden; }
   color-scheme: dark;
 }
 
-/* Aydınlık tema (129, E277): sarı metin beyaz zeminde okunmaz, vurgu metni koyulaşır */
+/* Aydınlık tema (129, E277): marka yeşili beyaz zeminde metin için yetersiz (3,2:1), vurgu metni koyulaşır (#2F6B2E: 6,4:1) */
 :root[data-theme="light"] {
   --bg: #ffffff;
   --surface: #f6f6f4;
@@ -71,12 +72,12 @@ html, body { height: 100%; overflow: hidden; }
   --title: #0c0c0c;
   --muted: #5b616b;
   --faint: #6b717b;
-  --accent: #f7df1e;
-  --accent-hover: #e8d00b;
-  --accent-ink: #111111;
-  --accent-fg: #7a6a00;
-  --accent-soft: rgba(247, 223, 30, .22);
-  --accent-line: rgba(160, 140, 0, .5);
+  --accent: #5FA04E;
+  --accent-hover: #7CC35F;
+  --accent-ink: #0c0c0c;
+  --accent-fg: #2F6B2E;
+  --accent-soft: rgba(95, 160, 78, .16);
+  --accent-line: rgba(62, 134, 61, .55);
   --ok: #157f3b;
   --warn: #b45309;
   --err: #c0362c;
@@ -84,11 +85,11 @@ html, body { height: 100%; overflow: hidden; }
   --del-bg: rgba(192, 54, 44, .1);
   --overlay: rgba(255, 255, 255, .9);
   --shadow: 0 12px 40px rgba(0, 0, 0, .18);
-  --sel: rgba(247, 223, 30, .45);
+  --sel: rgba(95, 160, 78, .3);
   --active-line: rgba(0, 0, 0, .035);
-  --bracket: rgba(247, 223, 30, .4);
-  --hit: rgba(247, 223, 30, .4);
-  --hit-strong: rgba(230, 200, 0, .7);
+  --bracket: rgba(95, 160, 78, .28);
+  --hit: rgba(95, 160, 78, .3);
+  --hit-strong: rgba(62, 134, 61, .55);
   --minimap-view: rgba(0, 0, 0, .08);
   --guide: rgba(0, 0, 0, .09);
   --syn-kw: #cf222e;
@@ -101,12 +102,12 @@ html, body { height: 100%; overflow: hidden; }
   --syn-re: #116329;
   --syn-op: #24292f;
   --scope-0: #0550ae; --scope-1: #116329; --scope-2: #953800; --scope-3: #8250df;
-  --scope-4: #cf222e; --scope-5: #1b7c83; --scope-6: #7a6a00; --scope-7: #bf3989;
-  --chart-1: #b8a200;
+  --scope-4: #cf222e; --scope-5: #1b7c83; --scope-6: #2F6B2E; --scope-7: #bf3989;
+  --chart-1: #3E863D;
   --chart-2: #0969da;
   --chart-3: #cf222e;
-  --chart-4: #1a7f37;
-  --chart-heat: #9a7d00;
+  --chart-4: #8250df;
+  --chart-heat: #3E863D;
   color-scheme: light;
 }
 
@@ -121,20 +122,23 @@ html, body { height: 100%; overflow: hidden; }
   --text: #ffffff;
   --muted: #e6e6e6;
   --faint: #d0d0d0;
-  --accent-soft: rgba(247, 223, 30, .25);
-  --accent-line: #f7df1e;
+  --accent: #7CC35F;
+  --accent-hover: #9BD67F;
+  --accent-fg: #7CC35F;
+  --accent-soft: rgba(124, 195, 95, .25);
+  --accent-line: #7CC35F;
   --ok: #5cff8f;
   --warn: #ffb35c;
   --err: #ff8a7d;
   --add-bg: rgba(92, 255, 143, .22);
   --del-bg: rgba(255, 138, 125, .25);
-  --sel: rgba(247, 223, 30, .45);
+  --sel: rgba(124, 195, 95, .45);
   --active-line: rgba(255, 255, 255, .1);
-  --hit: rgba(247, 223, 30, .4);
+  --hit: rgba(124, 195, 95, .4);
   --guide: rgba(255, 255, 255, .3);
   --syn-kw: #ff9d96;
   --syn-str: #c4e3ff;
-  --syn-num: #fff066;
+  --syn-num: #8ff0f7;
   --syn-com: #c8c8c8;
   --syn-fn: #e6ccff;
   --syn-def: #ffc58f;
@@ -437,6 +441,10 @@ button:active:not(:disabled) { transform: translateY(1px); }
 .empty img { margin-bottom: 14px; transform: rotate(-4deg); filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .35)); }
 .empty-title { font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .empty-body { max-width: 34ch; color: var(--muted); text-wrap: balance; }
+.empty-pkg { grid-template-columns: auto minmax(0, 1fr); margin-top: 14px; max-width: min(56ch, 100%); text-align: start; pointer-events: auto; user-select: text; }
+.empty-pkg dd { overflow-wrap: anywhere; text-align: start; }
+.empty-pkg[hidden] { display: none; }
+.empty.is-pkg .empty-actions { display: none; }
 .empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; pointer-events: auto; }
 
 #drop {

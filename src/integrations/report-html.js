@@ -74,7 +74,7 @@ export function buildReportHtml({ input, output, report = null, techniques = [],
 <meta name="referrer" content="no-referrer">
 <title>${e(s.title)}: ${e(name)}</title>
 <style>
-:root { --bg: #0c0c0c; --surface: #121212; --line: #2a2a2a; --text: #ececec; --muted: #9aa0ad; --accent: #f7df1e; --add: #4ade80; --del: #ff6b5b; color-scheme: dark; }
+:root { --bg: #0c0c0c; --surface: #121212; --line: #2a2a2a; --text: #ececec; --muted: #9aa0ad; --accent: #5FA04E; --add: #4ade80; --del: #ff6b5b; color-scheme: dark; }
 @media (prefers-color-scheme: light) { :root { --bg: #fafafa; --surface: #ffffff; --line: #dddddd; --text: #111111; --muted: #555b66; --accent: #8a7a00; --add: #137333; --del: #b3261e; color-scheme: light; } }
 body { margin: 0; padding: 16px; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, sans-serif; }
 main { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }

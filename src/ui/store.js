@@ -61,7 +61,7 @@ function marks(m) {
 export function sanitizeSession(raw) {
   if (!raw || typeof raw !== 'object' || !Array.isArray(raw.docs)) throw new Error('session: docs yok');
   const groups = (Array.isArray(raw.groups) ? raw.groups : []).slice(0, 200).map((g) => ({
-    id: str(g?.id, 40), name: str(g?.name, 120), color: /^#[0-9a-f]{6}$/i.test(g?.color) ? g.color : '#f7df1e', collapsed: g?.collapsed === true,
+    id: str(g?.id, 40), name: str(g?.name, 120), color: /^#[0-9a-f]{6}$/i.test(g?.color) ? g.color : '#5FA04E', collapsed: g?.collapsed === true,
   })).filter((g) => g.id);
   const gids = new Set(groups.map((g) => g.id));
   const docs = raw.docs.slice(0, 500).map((d) => ({

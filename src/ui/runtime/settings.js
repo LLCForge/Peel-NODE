@@ -50,12 +50,10 @@ export function render(root, data, onChange) {
       status.textContent = e.message;
     }
   };
+  // Node sürümü: tarayıcı profili, çerez ve localStorage alanları gösterilmez; kayıtlı değerleri collect() olduğu gibi korur
   const form = el('form', { class: 'rt-settings', onsubmit: (e) => { e.preventDefault(); save(); } },
-    field('profile', tx('profile'), inputs.profile),
     field('now', tx('now'), inputs.now),
     field('seed', tx('seed'), inputs.seed),
-    field('cookie', tx('cookie'), inputs.cookie),
-    field('storage', tx('storage'), inputs.storage),
     field('responses', tx('responses'), inputs.responses),
     field('memoryMB', tx('memory'), inputs.memoryMB),
     field('timeoutMs', tx('timeout'), inputs.timeoutMs),

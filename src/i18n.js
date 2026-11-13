@@ -4,7 +4,7 @@ import { EXTRA_LANGS } from './ui/i18n-langs.js';
 // Arayüz metinleri. Pass log'ları ve rapordaki teknik etiketler şimdilik Türkçe kalır.
 const DICT = {
   tr: {
-    'brand.sub': 'JS DEOBFUSCATOR',
+    'brand.sub': 'NODE.JS DEOBFUSCATOR',
     'action.lang': 'EN',
     'action.lang.label': 'Switch to English',
     'action.open': 'Dosya aç',
@@ -22,7 +22,7 @@ const DICT = {
     'tab.report': 'Rapor',
     'tab.timeline': 'Zaman çizelgesi',
     'tab.diff': 'Fark',
-    'input.placeholder': 'Obfuscated JavaScript…',
+    'input.placeholder': 'Gizlenmiş Node.js kodu…',
     'output.placeholder': 'Çözülen kod burada görünecek.',
     'empty.title': 'Gizlenmiş kodu yapıştır',
     'empty.body': 'ya da bir .js dosyasını buraya sürükle. Kod tarayıcından çıkmaz.',
@@ -155,7 +155,7 @@ const DICT = {
     'rt.memory': 'Bellek sınırı (MB)',
     'rt.timeout': 'Süre sınırı (ms)',
     'rt.verifyLevel': 'Doğrulama seviyesi',
-    'rt.watch': 'İzlenen yollar (virgülle; ör. navigator.userAgent)',
+    'rt.watch': 'İzlenen yollar (virgülle; ör. process.env, process.argv)',
     'rt.save': 'Kaydet',
     'rt.reset': 'Varsayılan',
     'rt.saved': 'Kaydedildi; sonraki çalıştırmada uygulanır.',
@@ -239,7 +239,7 @@ const DICT = {
     'report.sym.loading': 'Sembolik analiz çalışıyor…',
   },
   en: {
-    'brand.sub': 'JS DEOBFUSCATOR',
+    'brand.sub': 'NODE.JS DEOBFUSCATOR',
     'action.lang': 'TR',
     'action.lang.label': 'Türkçeye geç',
     'action.open': 'Open file',
@@ -257,7 +257,7 @@ const DICT = {
     'tab.report': 'Report',
     'tab.timeline': 'Timeline',
     'tab.diff': 'Diff',
-    'input.placeholder': 'Obfuscated JavaScript…',
+    'input.placeholder': 'Obfuscated Node.js code…',
     'output.placeholder': 'Deobfuscated code appears here.',
     'empty.title': 'Paste obfuscated code',
     'empty.body': 'or drop a .js file here. Your code never leaves the browser.',
@@ -390,7 +390,7 @@ const DICT = {
     'rt.memory': 'Memory limit (MB)',
     'rt.timeout': 'Time limit (ms)',
     'rt.verifyLevel': 'Verification level',
-    'rt.watch': 'Watched paths (comma separated, e.g. navigator.userAgent)',
+    'rt.watch': 'Watched paths (comma separated, e.g. process.env, process.argv)',
     'rt.save': 'Save',
     'rt.reset': 'Defaults',
     'rt.saved': 'Saved; applied on the next run.',

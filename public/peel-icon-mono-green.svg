@@ -9,5 +9,5 @@
     <path d="M 732 910 L 892 750 Q 872 820 732 750 Q 734 900 732 910 Z" fill="black"/>
   </mask>
 </defs>
-<rect width="1024" height="1024" fill="#F7DF1E" mask="url(#mono)"/>
+<rect width="1024" height="1024" fill="#5FA04E" mask="url(#mono)"/>
 </svg>

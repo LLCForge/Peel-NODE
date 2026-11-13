@@ -170,7 +170,7 @@ const sandbox = sandboxApi(async (m) => host.handle(m));
   assert.deepEqual(an.leaks.map((l) => l.kind), ['url', 'domain']);
   const fx = buildFixture({ code: 'a();', expect: ['a()'] });
   assert.equal(fx, '// EXPECT: a()\na();\n');
-  assert.match(issueUrl({ title: 't', fixture: fx }), /^https:\/\/github\.com\/LLCForge\/Peel-JS\/issues\/new\?/);
+  assert.match(issueUrl({ title: 't', fixture: fx }), /^https:\/\/github\.com\/LLCForge\/Peel-NODE\/issues\/new\?/);
   assert.equal(issueUrl({ title: 't', fixture: 'x'.repeat(10000) }), null);
 
   const html = buildReportHtml({ input: '<script>alert(1)</script>', output: 'alert(1);', name: '"x".js' });

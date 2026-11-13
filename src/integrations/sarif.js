@@ -2,7 +2,7 @@
 // Konum: bulgunun çözülmüş çıktıdaki ilk geçtiği satır. Semgrep sonuçları (H172) varsa aynı dosyaya eklenir.
 
 const SARIF_SCHEMA = 'https://json.schemastore.org/sarif-2.1.0.json';
-const HOME = 'https://github.com/LLCForge/Peel-JS';
+const HOME = 'https://github.com/LLCForge/Peel-NODE';
 
 const THREAT_TEXT = {
   skimmer: 'Ödeme/form verisi okuyup gönderen kod (skimmer)',

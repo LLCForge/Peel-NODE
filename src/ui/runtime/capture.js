@@ -15,9 +15,9 @@ export function render(root, dynamic) {
       ? el('div', {}, ...c.dynamicCode.slice(0, 30).map((d) => el('details', {}, el('summary', {}, `${d.via} · ${d.length} · ${d.hash}`),
         el('pre', { class: 'mono', style: 'white-space:pre-wrap;max-height:200px;overflow:auto' }, d.code))))
       : muted(tx('none'))),
-    section(tx('fp'), c.fingerprint.length
-      ? el('div', { class: 'chips' }, ...Object.entries(c.fingerprint.reduce((a, f) => ({ ...a, [f.api]: (a[f.api] ?? 0) + 1 }), {})).map(([k, n]) => el('span', { class: 'chip' }, k, el('b', {}, String(n)))))
-      : muted(tx('none'))),
+    // tarayıcı parmak izi bölümü yalnızca çağrı görüldüyse (Node kodunda olağan değil)
+    c.fingerprint.length ? section(tx('fp'),
+      el('div', { class: 'chips' }, ...Object.entries(c.fingerprint.reduce((a, f) => ({ ...a, [f.api]: (a[f.api] ?? 0) + 1 }), {})).map(([k, n]) => el('span', { class: 'chip' }, k, el('b', {}, String(n)))))) : null,
     section(tx('wasm'), wasm.length
       ? el('div', {}, ...wasm.map((w) => el('div', {},
         el('p', {}, `${w.source ?? 'runtime'} · ${w.size ?? '?'} B${w.error ? ` · ${w.error}` : ''}`),

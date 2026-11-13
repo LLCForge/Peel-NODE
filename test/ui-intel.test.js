@@ -260,7 +260,7 @@ if (false) { dead(); }`;
   const sess = sanitizeSession({ active: 'x', groups: [{ id: 'g1', name: 'G', color: 'red' }], docs: [{ id: 'd1', name: 'a.js', input: 'a()', group: 'g1', marks: { in: { bookmarks: [3, -1, 'x'], notes: [{ line: 2, text: 'n' }, { line: 0, text: 'bad' }] } } }, { name: 'no-id' }] });
   assert.equal(sess.docs.length, 1);
   assert.equal(sess.active, 'd1');
-  assert.equal(sess.groups[0].color, '#f7df1e');
+  assert.equal(sess.groups[0].color, '#5FA04E');
   assert.deepEqual(sess.docs[0].marks.in, { bookmarks: [3], notes: [{ line: 2, text: 'n' }] });
   assert.throws(() => sanitizeSession({ docs: 'x' }));
 }
