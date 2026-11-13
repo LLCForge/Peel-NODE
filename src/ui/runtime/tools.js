@@ -1,7 +1,5 @@
 import { el, tx, section, muted, table, button, download } from './dom.js';
-import { render as renderCompare } from './compare.js';
 import { render as renderReplay } from './replay.js';
-import { PROFILES } from '../../core/threat.js';
 import { getSettings } from '../../sandbox/settings.js';
 
 // İsteğe bağlı çalışma anı / doğrulama araçları. Ağır modüller ilk kullanımda yüklenir.
@@ -32,34 +30,8 @@ export function render(root, ctx) {
   const { sandbox, report, text, output } = ctx;
   if (!sandbox || text == null) { root.append(section(tx('tools'), muted(tx('noSandbox')))); return; }
   const out = el('div', { 'aria-live': 'polite' });
-  const profiles = ['default', ...Object.keys(PROFILES)];
-  const pick = (v) => el('select', { 'aria-label': tx('profile') }, ...profiles.map((p) => el('option', { value: p, selected: p === v }, p)));
-  const pa = pick('chrome-win');
-  const pb = pick('headless-bot');
-  const consent = el('input', { type: 'checkbox', id: 'peel-rt-consent' });
-
+  // Node sürümü: tarayıcı profili karşılaştırması ve gerçek DOM çalıştırması Node kodu için anlamsız, listelenmez
   const tools = [
-    el('span', {}, pa, ' ↔ ', pb, ' ', runner(out, tx('compare'), async (o) => {
-      const { compareProfiles } = await import('../../sandbox/compare.js');
-      renderCompare(o, await compareProfiles(sandbox, text, pa.value, pb.value));
-    })),
-    el('span', {}, consent, el('label', { for: 'peel-rt-consent' }, tx('consent')), ' ',
-      runner(out, tx('realdom'), async (o) => {
-        if (!consent.checked) throw new Error(tx('consent'));
-        const { runRealDom } = await import('../../sandbox/realdom.js');
-        const frameBox = el('div');
-        o.append(frameBox);
-        const r = await runRealDom(output, { consent: true, container: frameBox });
-        consent.checked = false; // onay her çalıştırma için ayrı
-        o.append(section(tx('realdom'),
-          r.ok ? null : el('p', { class: 'rep-error' }, r.error),
-          r.navigationBlocked.length ? el('p', { class: 'rep-error' }, `engellenen yönlendirme: ${r.navigationBlocked.map((v) => v.uri).join(', ')}`) : null,
-          table(['console'], r.console.map((c) => [c]), ['mono']),
-          r.errors.length ? table(['error'], r.errors.map((c) => [c]), ['mono']) : null,
-          table(['engellenen', 'uri'], r.blocked.map((b) => [b.directive, b.uri]), ['', 'mono']),
-          muted(`DOM değişikliği: ${r.mutations} · engellenen çerçeve: ${r.frames} · dinleyiciler: ${JSON.stringify(r.listeners)}`),
-          el('details', {}, el('summary', {}, 'DOM'), el('pre', { class: 'mono', style: 'white-space:pre-wrap;max-height:240px;overflow:auto' }, r.dom))));
-      })),
     runner(out, tx('fuzz'), async (o) => {
       const { differentialFuzz } = await import('../../verify/fuzz.js');
       const r = await differentialFuzz(sandbox, text, output, { iterations: 24 });

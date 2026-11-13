@@ -1,7 +1,7 @@
 {
-  "name": "PEEL · JS Deobfuscator",
+  "name": "PEEL · Node.js Deobfuscator",
   "short_name": "PEEL",
-  "description": "Open-source JavaScript deobfuscator that runs entirely in your browser. Works offline; your code never leaves your device.",
+  "description": "Open-source Node.js deobfuscator that runs entirely in your browser. Works offline; your code never leaves your device.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
@@ -16,6 +16,6 @@
     { "src": "peel-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ],
   "file_handlers": [
-    { "action": "./", "accept": { "text/javascript": [".js", ".mjs", ".cjs"] } }
+    { "action": "./", "accept": { "text/javascript": [".js", ".mjs", ".cjs"], "application/octet-stream": [".jsc", ".asar", ".exe"], "application/gzip": [".tgz"], "application/zip": [".zip"] } }
   ]
 }

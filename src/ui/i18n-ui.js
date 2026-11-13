@@ -1,8 +1,11 @@
 // Arayüz katmanının (editör, araçlar, çalışma alanı, ayarlar) metinleri. src/i18n.js bunları DICT'e birleştirir.
 
 export const UI_TR = {
-  'drop': 'Dosya, klasör, zip/crx ya da HAR bırak',
-  'empty.body': 'ya da .js, klasör, zip, crx veya HAR dosyasını buraya sürükle. Kod tarayıcından çıkmaz.',
+  'drop': 'Dosya, klasör, npm paketi (.tgz), asar, zip ya da .exe bırak',
+  'empty.body': 'ya da .js/.cjs/.mjs, bytenode .jsc, npm .tgz, .asar, zip veya pkg/nexe/SEA .exe dosyasını buraya sürükle. Kod cihazından çıkmaz.',
+  'pkg.noSource': 'Kaynak kod çıkarılamadı', 'pkg.noSourceBody': 'Bu dosya yalnızca V8 bytecode ya da ikili veri içeriyor; çözülecek JavaScript kaynağı yok.',
+  'pkg.kind': 'Paket türü', 'pkg.size': 'Boyut', 'pkg.note': 'Not',
+  'pkg.noUnpacker': '{n}: Node paket açıcı bu sürümde yok; yalnızca .js/.cjs/.mjs ve zip açılabilir',
   'ui.ok': 'Tamam', 'ui.cancel': 'Vazgeç', 'ui.close': 'Kapat', 'ui.done': 'Bitti', 'ui.on': 'açık', 'ui.off': 'kapalı',
   'view.menu': 'Görünüm', 'view.reading': 'Okuma',
   'layout.resize': 'Panelleri yeniden boyutlandır', 'layout.resizeTools': 'Araç panelini yeniden boyutlandır',
@@ -176,8 +179,11 @@ export const UI_TR = {
 };
 
 export const UI_EN = {
-  'drop': 'Drop a file, folder, zip/crx or HAR',
-  'empty.body': 'or drop a .js file, folder, zip, crx or HAR here. Your code never leaves the browser.',
+  'drop': 'Drop a file, folder, npm package (.tgz), asar, zip or .exe',
+  'empty.body': 'or drop a .js/.cjs/.mjs, bytenode .jsc, npm .tgz, .asar, zip or pkg/nexe/SEA .exe file here. Your code never leaves your device.',
+  'pkg.noSource': 'No source could be extracted', 'pkg.noSourceBody': 'This file only contains V8 bytecode or binary data; there is no JavaScript source to deobfuscate.',
+  'pkg.kind': 'Package type', 'pkg.size': 'Size', 'pkg.note': 'Note',
+  'pkg.noUnpacker': '{n}: the Node package unpacker is not available in this build; only .js/.cjs/.mjs and zip can be opened',
   'ui.ok': 'OK', 'ui.cancel': 'Cancel', 'ui.close': 'Close', 'ui.done': 'Done', 'ui.on': 'on', 'ui.off': 'off',
   'view.menu': 'View', 'view.reading': 'Read',
   'layout.resize': 'Resize panels', 'layout.resizeTools': 'Resize tools panel',

@@ -1,23 +1,30 @@
 {
-  "name": "peel-js",
+  "name": "peel-node",
   "version": "0.1.0",
-  "description": "Open-source JavaScript deobfuscator that runs in your browser. Your code never leaves your device.",
+  "description": "Open-source Node.js deobfuscator: unpacks pkg/nexe/SEA executables, bytenode, npm tarballs and asar archives, then deobfuscates with verification. Runs locally; your code never leaves your device.",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "peel": "bin/peel.js"
+    "peel-node": "bin/peel-node.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LLCForge/Peel-JS.git"
+    "url": "git+https://github.com/LLCForge/Peel-NODE.git"
   },
-  "homepage": "https://github.com/LLCForge/Peel-JS#readme",
+  "homepage": "https://github.com/LLCForge/Peel-NODE#readme",
   "bugs": {
-    "url": "https://github.com/LLCForge/Peel-JS/issues"
+    "url": "https://github.com/LLCForge/Peel-NODE/issues"
   },
   "keywords": [
     "deobfuscator",
     "javascript",
+    "nodejs",
+    "node",
+    "pkg",
+    "nexe",
+    "bytenode",
+    "asar",
+    "npm",
     "obfuscator.io",
     "js-confuser",
     "reverse-engineering",

@@ -9,7 +9,7 @@ import { traverse } from '../util/ast.js';
 // taranır ve orada kalan göstergeler "sızıntı" olarak raporlanır; o durumda katkı gönderilmemelidir.
 // Hiçbir şey otomatik gönderilmez: sonuç dosya olarak indirilir ya da kullanıcı isterse issue sayfası açılır.
 
-const REPO_ISSUES = 'https://github.com/LLCForge/Peel-JS/issues/new';
+const REPO_ISSUES = 'https://github.com/LLCForge/Peel-NODE/issues/new';
 const MAX_ISSUE_URL = 7000;
 
 const PATTERNS = [

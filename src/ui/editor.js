@@ -202,7 +202,7 @@ const minimap = ViewPlugin.fromClass(class {
     ctx.scale(dpr, dpr);
     const css = getComputedStyle(view.dom);
     const text = css.getPropertyValue('--muted').trim() || '#999';
-    const accent = css.getPropertyValue('--accent').trim() || '#f7df1e';
+    const accent = css.getPropertyValue('--accent').trim() || '#5FA04E';
     const err = css.getPropertyValue('--err').trim() || '#f66';
     const cw = W / 120;
     ctx.fillStyle = text;

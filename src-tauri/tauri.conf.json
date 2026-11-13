@@ -13,7 +13,7 @@
     "withGlobalTauri": false,
     "windows": [
       {
-        "title": "PEEL · JS Deobfuscator",
+        "title": "PEEL · Node.js Deobfuscator",
         "width": 1280,
         "height": 800,
         "minWidth": 720,
@@ -42,7 +42,7 @@
     "active": true,
     "targets": "all",
     "category": "DeveloperTool",
-    "shortDescription": "JavaScript deobfuscator",
+    "shortDescription": "Node.js deobfuscator",
     "longDescription": "PEEL obfuscated JavaScript kodunu cihazda çözer. Kod hiçbir yere gönderilmez.",
     "license": "MIT",
     "icon": [
