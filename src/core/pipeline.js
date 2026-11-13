@@ -27,7 +27,7 @@ const DEEP_MAX_LEN = 2_000_000; // QuickJS'te 1 MB'lık programı çalıştırma
  * @param {object|null} o.resume   trace.checkpoint() çıktısı: o turdan devam edilir
  * @param {string[]|null} o.passOrder AST pass sırası (bağımlılıklara uymuyorsa yok sayılır)
  */
-export async function deobfuscate(input, {
+async function run(input, {
   level = 2, only = null, sandbox = null, deep = false, signal = null, verifyLevel = null,
   onLog = () => {}, onProgress = () => {}, onPass = () => {}, onSnapshot = () => {},
   // order: pass kimliklerinin kullanıcı sırası; onLayer: değişen metin katmanı; onApprove: her kabulden önce onay (false → reddet)
@@ -254,4 +254,14 @@ export async function deobfuscate(input, {
   onProgress(100);
   // text: metin katmanları açıldıktan sonraki program; rapor çalışma anı analizini bunun üzerinde yapar
   return { code: out, stats, events, text, verified: Boolean(baseline), verifyLevel: baseline ? (effectsCheck ? 'effects' : 'behaviour') : 'parse', findings, env: envName };
+}
+
+// npm bin betikleri #! satırıyla başlar: QuickJS bunu sözdizimi hatası sayar ve sandbox kodu farklı biçimlerde sarar
+// (try { }, fonksiyon). Satır girişte ayrılır (yerinde boş satır kalır, konumlar korunur), çıktının başına geri konur.
+export async function deobfuscate(input, options = {}) {
+  const m = typeof input === 'string' ? /^#![^\n]*/.exec(input) : null;
+  if (!m) return run(input, options);
+  const r = await run(input.slice(m[0].length), options);
+  if (typeof r.code === 'string' && !r.error) r.code = `${m[0]}\n${r.code.replace(/^\s*\n/, '')}`;
+  return r;
 }
