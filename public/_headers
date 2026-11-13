@@ -1,0 +1,6 @@
+# E724: cross-origin isolation (Netlify / Cloudflare Pages biçimi). SharedArrayBuffer açılır, Z3 tarayıcıda çalışır.
+# Başlık veremeyen barındırmada (ör. GitHub Pages) sayfa izole olmaz ve yerleşik çözücü kullanılır.
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: same-origin

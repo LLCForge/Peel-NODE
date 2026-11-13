@@ -1,0 +1,274 @@
+{
+  "E501": [
+    "x",
+    "analysis/ops.js: ToPrimitive/ToNumber/ToString/ToNumeric/ToPropertyKey/IsLooselyEqual ve operatörler; sabit yayılımı ve raporda sandbox'sız katlama adayları"
+  ],
+  "E502": [
+    "x",
+    "isStrict(): modül, sınıf gövdesi, \"use strict\"; gevşek/sıkı farkı olan yapılar (with, delete ad, sekizlik, bildirilmemiş atama, this) raporda"
+  ],
+  "E503": [
+    "x",
+    "statik TDZ (bildirimden önce okuma, bildirimden önce çağrılan iç fonksiyon) + veri akışında TDZ giriş tanımı"
+  ],
+  "E504": [
+    "x",
+    "nesne/sınıf/defineProperty/__defineGetter__ erişimcileri, yan etki sınıflaması ve yan etkili özellik okumaları"
+  ],
+  "E505": [
+    "x",
+    "new Proxy tuzak envanteri, geçersiz tuzak adları, proxy'ye bağlı değişkenler yan etkili sayılır; çalışma anı QuickJS'in gerçek Proxy'si"
+  ],
+  "E506": [
+    "x",
+    "ownKeysOrder() (indeks → string → symbol sırası), iyi bilinen Symbol kancaları ve anlamları"
+  ],
+  "E507": [
+    "x",
+    "sınıf başına özel alan/yöntem/erişimci envanteri, #x in o marka denetimleri"
+  ],
+  "E508": [
+    "x",
+    "resolveInWith(): with gövdesindeki adın özellik/binding/dinamik çözümü (literal nesne, Object.prototype, unscopables)"
+  ],
+  "E509": [
+    "x",
+    "doğrudan/dolaylı eval, new Function, string zamanlayıcılar; sıkı/gevşek var sızıntısı; veri akışı direct eval'li birimi izlemez"
+  ],
+  "E510": [
+    "x",
+    "iframe contentWindow/opener/Worker/ShadowRealm kaynakları, başka realm'den temiz yerleşik alma, realm'e duyarlı instanceof/constructor denetimleri"
+  ],
+  "E511": [
+    "x",
+    "namespaceKeys() kod birimi sıralaması, ad alanına yazma/silme (TypeError), dinamik import, modülün kendi ad alanı şekli"
+  ],
+  "E512": [
+    "x",
+    "üst seviye await/for await tespiti; wrapTopLevelAwait() ile sandbox gözlem çalıştırmasında async sarmalayıcı"
+  ],
+  "E513": [
+    "x",
+    "for-of/yayma/destructuring/yield*/Array.from/Map-Set girdileri: yerleşik mi kullanıcı yineleyicisi mi, erken çıkışta return()"
+  ],
+  "E514": [
+    "x",
+    "for await (senkron yineleyici üzerinde await), Symbol.asyncIterator tanımları, async üreteçler"
+  ],
+  "E515": [
+    "x",
+    "then tanımlayan nesneler ve await/Promise.resolve/resolve ile benimsenmeleri; sandbox'ta gerçek thenable benimseme kaydı"
+  ],
+  "E516": [
+    "x",
+    "sandbox olay döngüsü modeli: makro görev kuyruğu, her görev öncesi mikro kuyruk boşaltma, queueMicrotask; çalışma sırası raporda"
+  ],
+  "E517": [
+    "x",
+    "söz izleme: new Promise, statikler, then türevleri, async fonksiyon/ok dönüşleri ve async sınıf/nesne/özel yöntemler (gövde ok fonksiyona taşınıp sözü doğrudan izlenir); mikro görev noktası sonrası ret denetimi ve sonradan işlenen ret"
+  ],
+  "E518": [
+    "x",
+    "statik .stack okuma/inceleme tespiti; analiz çalıştırmasında kurucuyla yaratılan hatalar ve motorun fırlattığı hatalar programa ulaştığı yerde (try/catch enstrümantasyonu, ret işleyicileri) V8 biçiminde (başlık + stackTraceLimit), okumaları kaydedilir"
+  ],
+  "E519": [
+    "x",
+    "sandbox'ta Error.captureStackTrace (kurucu çerçevesini atlar, stackTraceLimit=10) ve statik tespit"
+  ],
+  "E520": [
+    "x",
+    "arguments.callee/caller sıkı modda TypeError, gevşekte fonksiyon; veri akışı arguments takma adında parametreleri izlemez"
+  ],
+  "E521": [
+    "x",
+    "functionLength() modeli, katlanabilir .length okumaları, defineProperty ile sahte length, sıkı fonksiyonda .caller/.arguments TypeError"
+  ],
+  "E522": [
+    "x",
+    "new.target kullanan fonksiyonlar ve new ile/olmadan çağrı sayıları"
+  ],
+  "E523": [
+    "x",
+    "classInitOrder(): tanım anı ve örnek başlatma sırası, sonraki alanı okuyan başlatıcı uyarısı"
+  ],
+  "E524": [
+    "x",
+    "statik bloklar tanım anı sırasında statik alanlarla kaynak sırasıyla; sayım raporda"
+  ],
+  "E525": [
+    "x",
+    "parser'a decorators eklentisi; decoratorOrder(): değerlendirme (yukarıdan aşağı) ve uygulama (içten dışa, öğeler sonra sınıf) sırası"
+  ],
+  "E526": [
+    "x",
+    "regexFeatures() + compareRegexEngines(): desenler host motorunda ve QuickJS'te derlenip programın string'leri üzerinde karşılaştırılır"
+  ],
+  "E527": [
+    "x",
+    "\\p{…} kaçışları, u/v bayraksız literal anlamı ve host motorunda özellik adı geçerliliği"
+  ],
+  "E528": [
+    "x",
+    "g/y bayraklı değişkenlerin çoklu/döngüde test/exec kullanımı, lastIndex okuma/yazma"
+  ],
+  "E529": [
+    "x",
+    "sandbox Date: sabit dakika ya da IANA saat dilimi (yaz saati dahil, host Intl verisi), varsayılan UTC; yerel getter/setter, kurucu, Date.parse, toString dilim adı; statik tespit"
+  ],
+  "E530": [
+    "x",
+    "Date/Number/BigInt/Array toLocale* ve String#localeCompare ECMA-402 varsayılanlarıyla host Intl köprüsü üzerinden: dateStyle/timeStyle, tüm alan seçenekleri, era, dayPeriod, hourCycle, timeZoneName türleri, IANA timeZone; 8 yerel ayarda V8 çıktısıyla birebir test edildi"
+  ],
+  "E531": [
+    "x",
+    "Intl.NumberFormat (unit, scientific, engineering, compact, currency, yuvarlama seçenekleri, BigInt) ve PluralRules/Collator/RelativeTimeFormat/ListFormat host Intl köprüsüyle; 8 yerel ayarda V8 çıktısıyla birebir test edildi"
+  ],
+  "E534": [
+    "x",
+    "performance.now monoton ve deterministik (çağrı başına perfStep ms, varsayılan 1)"
+  ],
+  "E536": [
+    "x",
+    "BigInt aritmetiği, karışık tür TypeError, 0n bölme/negatif üs RangeError, >>> TypeError, karşılaştırma ve ToString"
+  ],
+  "E537": [
+    "x",
+    "aynı ArrayBuffer üzerindeki TypedArray/DataView/subarray görünümleri ve yazmalar (takma ad grupları)"
+  ],
+  "E538": [
+    "x",
+    "çalışma anı ayırma modeli: transfer/transferToFixedLength, structuredClone transfer, window/MessagePort/Worker postMessage; ayrılmış tampon byteLength 0, detached, görünüm uzunluğu 0, indeks undefined, yöntemler/DataView/kurucular TypeError (TypedArray örnekleri Proxy ile sarılır); statik ayırma sonrası kullanım tespiti"
+  ],
+  "E539": [
+    "x",
+    "SharedArrayBuffer/Atomics tespiti; sandbox'ta tek ajan ana iş parçacığı Atomics modeli (wait TypeError, waitAsync/notify)"
+  ],
+  "E540": [
+    "x",
+    "WeakRef/FinalizationRegistry tespiti; sandbox'ta hiç toplanmayan (spec'e uygun) deterministik model"
+  ],
+  "E541": [
+    "x",
+    "PASS_DEPS + passDag(): kayıt sırasının topolojik doğrulaması (test), raporda sıra/ihlaller"
+  ],
+  "E542": [
+    "x",
+    "passConflicts(): karşılıklı geri alma, turlar arası salınım, bir pass sonrası tekrarlayan başarısızlıklar"
+  ],
+  "E543": [
+    "x",
+    "interactionMatrix(): etkinleştirme/bozma sayıları, raporda tablo"
+  ],
+  "E544": [
+    "x",
+    "costOrder(): ortalama süre ve faydaya göre bağımlılıklara uyan sıra; pipeline passOrder seçeneği doğrulayarak uygular"
+  ],
+  "E546": [
+    "x",
+    "salvage(): davranış doğrulaması başarısız pass'in yama işlemleri tek tek denenip korunanlar tutulur (pipeline'da, davranış temeli varken)"
+  ],
+  "E547": [
+    "x",
+    "trace.checkpoint() her tur (kod + sürümlü AST + özet), restoreCheckpoint() doğrulama, deobfuscate({ resume })"
+  ],
+  "E548": [
+    "x",
+    "SnapshotStore: hash-consing ile alt ağaç paylaşımı, eşitlik doğrulamalı; raporda paylaşım oranı"
+  ],
+  "E549": [
+    "x",
+    "AnalysisSession: birim özetleri hash'e göre önbellekte; her pass sonrası yalnızca kirli birimler yeniden analiz edilir"
+  ],
+  "E550": [
+    "x",
+    "dirtyUnits(): değişen/eklenen/silinen/temiz birimler, pass başına raporda"
+  ],
+  "E551": [
+    "x",
+    "structuralHash(): WeakMap önbellekli 64 bit yapısal hash, invalidate/forget"
+  ],
+  "E552": [
+    "x",
+    "session.reaching/constant yalnızca istenen birimi analiz eder; raporda tehlikeli çağrılara giden değerler"
+  ],
+  "E553": [
+    "x",
+    "artık bulunmayan hash'lerin özetleri düşer; birim dışı bağlam (prototype yaması, eval/arguments gölgelemesi) anahtarda"
+  ],
+  "E554": [
+    "x",
+    "dataflow.solve(): ileri/geri, istisna kenarlı genel worklist çözücü (min-heap)"
+  ],
+  "E555": [
+    "x",
+    "worklist önceliği (ters) son sıra; aynı girdi aynı analiz raporunu üretir (test)"
+  ],
+  "E556": [
+    "x",
+    "stableIds(): birim yolu + tür + yapısal hash + sıra; yeniden parse ve başka birimdeki değişiklikte değişmez"
+  ],
+  "E557": [
+    "x",
+    "trace: düğüm eşlemeyle taşınan girdi konumları; raporda çıktı fonksiyonlarının girdi satırları"
+  ],
+  "E558": [
+    "x",
+    "pass başına gerekçe kaydı: log satırları + yama özeti (işlem/kaldırılan/eklenen)"
+  ],
+  "E559": [
+    "x",
+    "pass başına AST yaması günlüğü, invertPatch, undoTo(k), son yamanın tersi raporda doğrulanır"
+  ],
+  "E561": [
+    "x",
+    "serializeAst/deserializeAst: peel-ast biçimi, sürüm denetimi, yükseltme tablosu, düğüm türü doğrulaması"
+  ],
+  "E562": [
+    "x",
+    "diffAst/applyPatch: splice/replace işlemleri, çakışma denetimi, alt küme uygulanabilir"
+  ],
+  "E563": [
+    "x",
+    "matchTrees(): tekil hash, ada göre bildirim, aşağıdan yukarı oy ve konumsal eşleme"
+  ],
+  "E564": [
+    "x",
+    "trace.note() kanalı; pass'lerin değiştirdiği deyimlere otomatik notlar, eşlemeyle taşınır, raporda"
+  ],
+  "E565": [
+    "x",
+    "kaybolan yorumlar eşlenen düğüme ya da eşlenmiş deyim atasına geri takılır (arayüz ve CLI'da açık)"
+  ],
+  "E570": [
+    "x",
+    "minifierSafety(): kaynak/ad/parametre sayısı okuma, dinamik kapsam, özellik karışımı; güvenli terser seçenekleri raporda"
+  ],
+  "E571": [
+    "x",
+    "shadowReport()/shadowChain()/shadowsBuiltin(): tüm kapsamlarda yerel ve yerleşik ad gölgelemesi"
+  ],
+  "E575": [
+    "x",
+    "analyzeFunction(): kullanım → tanımlar ve tanım → kullanımlar zincirleri"
+  ],
+  "E576": [
+    "x",
+    "istisna kenarlı CFG üzerinde ulaşan tanımlar (koşullu tanım öldürmez)"
+  ],
+  "E577": [
+    "x",
+    "geri yönlü canlılık; istisna işleyicisine canlı değişkenler korunur"
+  ],
+  "E578": [
+    "x",
+    "ölü atamalar (yakalanmayan, with/eval dışı değişkenlerde) raporda"
+  ],
+  "E579": [
+    "x",
+    "mevcut kopyalar (must) analizi + applyCopyPropagation() (gölgeleme denetimli)"
+  ],
+  "E580": [
+    "x",
+    "CFG üzerinde sabit yayılımı: soyut işlem modeli, TDZ birleşimi, bileşik/mantıksal atama ve artırma"
+  ]
+}

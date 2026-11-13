@@ -1,0 +1,286 @@
+{
+  "98": [
+    "x",
+    "Canary'li çerez/depolama/UA ile kaynak → hedef exfiltration haritası (düz, base64, hex, ters, URL kodlu)"
+  ],
+  "100": [
+    "removed",
+    "kullanıcı isteğiyle kapsamdan çıkarıldı"
+  ],
+  "103": [
+    "x",
+    "Gerçek tarayıcı ve headless profil farkı, bot tespit API'leri, 15 bot koruma sağlayıcısı imzası"
+  ],
+  "105": [
+    "x",
+    "registry.npmjs.org'dan yalnızca açık istekle indirme (adres önce gösterilir), SHA-512 bütünlük, tar açma, satır/IOC/API farkı, kurulum betikleri"
+  ],
+  "106": [
+    "x",
+    ".crx (CRX2/3) / .xpi / .zip tarayıcıda açılır; izin riski, içerik/arka plan betikleri, CSP, güncelleme adresi, JS dosya taraması, girdiye yükleme"
+  ],
+  "107": [
+    "x",
+    "Telegram/Discord/Slack webhook, Apps Script, form servisleri, gate.php, tünel, çıplak IP uç noktaları; kimlik alanı gönderimiyle sınıflandırma"
+  ],
+  "112": [
+    "x",
+    "MinHash (soyut token şingılları) + AST şekli + ortak IOC ile varyant aileleri; oturum koleksiyonu, JSON dışa/içe aktarma"
+  ],
+  "113": [
+    "x",
+    "Etiket başına anlık görüntü; hash, satır, IOC, API, sınıf, risk farkı ve uyarılar; geçmiş JSON dışa/içe aktarma"
+  ],
+  "114": [
+    "x",
+    "Markdown + JSON olay müdahale raporu: SHA-256, risk, IOC, exfil, phishing, anti-bot, kripto, kurallar, öneriler, maskeleme; UI ve CLI --incident"
+  ],
+  "E26": [
+    "x",
+    "48 araç imzası, 0–100 skor, eşikle otomatik pass profili; Ayarlar → Otomatik pass profili açıkken uygulama, CLI'da --profile auto uygular; eşik altında tüm pass'ler"
+  ],
+  "E27": [
+    "x",
+    "Pass türü, davranış doğrulaması ve geri alma oranından 0–100 güven skoru (rapor)"
+  ],
+  "E28": [
+    "x",
+    "engine-report obfuscatorSettings (obfio modeli) — kodlanmış splitStrings, parça uzunluğu ve kodlanmış selfDefending denetleyicisi bu grupta eklendi"
+  ],
+  "E29": [
+    "x",
+    "Rapor bölümü: araç, skor, kanıt, profil, sürüm, geri çıkarılan ayarlar, decoder zinciri"
+  ],
+  "E30": [
+    "x",
+    "obfuscator.io (0.x–1.x / 2.0–2.9 / ≥2.10 / ≥2.13), js-confuser 1.x/2.x, jsjiami, sojson, packer, webpack sürüm ayrımı"
+  ],
+  "E32": [
+    "x",
+    "Varsayılan, decoder önce, yapı önce, ters ve tohumlu karışık sıralar; doğrulanmış en düşük gizlilik skoru (UI + CLI --order-search)"
+  ],
+  "E33": [
+    "x",
+    "Seviye 1→4 kademeli çözme, her aşamanın doğrulanmış çıktısı sonrakinin girdisi (UI + CLI --cascade)"
+  ],
+  "E34": [
+    "x",
+    "Zaman çizelgesinde davranışı ilk bozan pass ikili aramayla bulunur, bağımlı pass'lerle geri alınıp pass dışarıda bırakılarak yeniden çalıştırılır"
+  ],
+  "E36": [
+    "x",
+    "Seçim tüm program bağlamıyla çözülür: kapsayan fonksiyon yönergeyle, program seviyesi seçim yorum işaretleriyle (keepComments) ya da token hizalamasıyla eşlenip yerine konur; davranış ve dış ad denetimi; uygulamadaki seçimi çöz komutu önce bunu dener"
+  ],
+  "E38": [
+    "x",
+    "31-static-strings (obfio): decoder ofseti afin biçimden sembolik, rotasyon checksum'ı statik; sandbox'sız base64/rc4/none"
+  ],
+  "E40": [
+    "x",
+    "Sarmalayıcı → decoder zincirleri statik çözülür (31-static-strings + wrappers); zincir derinliği raporlanır"
+  ],
+  "E41": [
+    "x",
+    "const-objects pass'i (mevcut): sabit nesne özellikleri ve ardışık kurulum satır içine yazılır"
+  ],
+  "E42": [
+    "x",
+    "const-objects pass'i (mevcut): o.KJs(a, b) → a + b operatör/çağrı proxy'leri"
+  ],
+  "E43": [
+    "x",
+    "37-confuser pass'i: js-confuser dispatcher fonksiyonları (new ve referans bayrakları dahil) ayrı fonksiyonlara açılır"
+  ],
+  "E49": [
+    "x",
+    "Regex .flags/.global/…/.source/.toString() ve literal .length mevcut pass'lerce katlanır"
+  ],
+  "E50": [
+    "x",
+    "Literal destructuring 42-indirection'da; kaynak düz ad olan nesne deseni (var {log: l} = console → console.log) 86-restructure'da"
+  ],
+  "E51": [
+    "x",
+    "86-restructure: void 0 → undefined (gölgelenmemişse); virgül zinciri bölme mevcut"
+  ],
+  "E53": [
+    "x",
+    "simplify pass'i (mevcut, A-20): a && b() → if, a || b() → if (!a)"
+  ],
+  "E54": [
+    "x",
+    "86-restructure: return/atama/var içindeki iç içe ternary → if/else zinciri"
+  ],
+  "E55": [
+    "x",
+    "37-confuser: function f(...M) { M.length = 2; M[0] } → gerçek parametreler"
+  ],
+  "E56": [
+    "x",
+    "79-regenerator: doğrusal akış, if/else, döngü (break/continue), try/catch/finally (tamamlanma kaydıyla), yield*, async → function*/async"
+  ],
+  "E57": [
+    "x",
+    "42-indirection: sabit nesneli with → açık erişim"
+  ],
+  "E58": [
+    "x",
+    "bundle.js: webpack 4/5, webpackChunk, browserify, esbuild, yol yorumu ve kaynak haritalı Rollup + bu grupta Parcel ve ZIP için modül dosyaları; UI ve CLI --split"
+  ],
+  "E59": [
+    "x",
+    "05-sourcemap pass'i (satır içi harita); harici .map UI'da ve CLI --source-map ile girdiye satır içi eklenir"
+  ],
+  "E60": [
+    "x",
+    "ui/srcmap.js token hizalamasıyla çıktı → girdi Source Map v3 (UI indirme + CLI --out-map)"
+  ],
+  "E61": [
+    "x",
+    "Statik: standart/URL-safe/dolgusuz/MIME/ters base64, basE91; özel alfabeli obfuscator.io base64 31-static-strings ile sandbox'sız"
+  ],
+  "E67": [
+    "x",
+    "static-decode: decodeURIComponent/decodeURI literal ya da sabit bağlamalı argümanla, sandbox'sız"
+  ],
+  "E68": [
+    "x",
+    "UTF-16 LE/BE mevcut; UTF-7 (RFC 2152) ve CESU-8/Java değiştirilmiş UTF-8 çözücüleri"
+  ],
+  "E75": [
+    "x",
+    "AES-128/192/256 ECB/CBC/CTR/CFB/OFB (FIPS-197, SP 800-38A vektörleri); koddan anahtar/IV ile ya da Salted__ parola modu"
+  ],
+  "E76": [
+    "x",
+    "DES ve 2/3 anahtarlı 3DES EDE (FIPS 46-3, SP 800-67 vektörleri)"
+  ],
+  "E77": [
+    "x",
+    "PEM/DER (PKCS#1/PKCS#8/SPKI) ya da n/e/d/p/q parçalarından anahtar; küçük/yakın asal modül çarpanlara ayrılır; PKCS#1 v1.5 çözüm"
+  ],
+  "E78": [
+    "x",
+    "TEA, XTEA, XXTEA (referans vektörleri; büyük/küçük-uçlu, xxtea-js uzunluk biçimi)"
+  ],
+  "E79": [
+    "x",
+    "Blowfish (pi tabloları BigInt ile hesaplanır; Eric Young vektörleri)"
+  ],
+  "E83": [
+    "x",
+    "static-decode: literal/sabit dizi join, split/reverse/join zinciri, sandbox'sız"
+  ],
+  "E84": [
+    "x",
+    "static-decode: parseInt(x, taban)/parseFloat/Number sabit argümanlarla"
+  ],
+  "E85": [
+    "x",
+    "static-decode: unescape/escape"
+  ],
+  "E86": [
+    "x",
+    "static-decode: encodeURI/encodeURIComponent"
+  ],
+  "E88": [
+    "x",
+    "Rastgele genişlikte bit açma (5–16, MSB/LSB); rapordaki otomatik arama tüm genişlikleri tarar, 5/6 bit İngilizce sıklık eşiğiyle süzülür"
+  ],
+  "E89": [
+    "x",
+    "static-decode: new TextDecoder(enc).decode(new Uint8Array([...]) | Uint8Array.from) statik katlanır"
+  ],
+  "E90": [
+    "x",
+    "LZString (base64/UTF16/URI/ham), gzip/zlib/raw deflate (DecompressionStream ya da saf JS), brotli (yerel ya da brotli@1.3.3)"
+  ],
+  "E92": [
+    "x",
+    "Çok katmanlı zincir (base64 → hex → gzip …) en okunabilir sonuca kadar izlenir, katman sayısı raporda"
+  ],
+  "E93": [
+    "x",
+    "RC4 anahtarı ayrı sarmalayıcı fonksiyonların parametrelerinden gelen şifreli tablo 31-static-strings ile sandbox'sız çözülür"
+  ],
+  "E611": [
+    "x",
+    "AES S-box/ters S-box/Rcon/T-tablosu, DES S-kutusu/IP, Blowfish pi, TEA delta, ChaCha/Salsa, RC4 KSA kalıbı"
+  ],
+  "E612": [
+    "x",
+    "MD5, MD5/SHA-1 IV, SHA-1/224/256/512, RIPEMD-160, Murmur3, xxHash32, FNV-1a, CRC32 sabitleri"
+  ],
+  "E613": [
+    "x",
+    "CryptoJS/Node/forge/WebCrypto/XXTEA/JSEncrypt çağrılarından ve isimli değişkenlerden anahtar; sandbox importKey kayıtları"
+  ],
+  "E614": [
+    "x",
+    "IV, Salted__ tuzu, PBKDF2/EvpKDF tuz ve iterasyon tespiti"
+  ],
+  "E615": [
+    "x",
+    "Çağrı/algoritma adından mod (CBC/ECB/CTR/CFB/OFB/GCM) ve tekrar eden bloklardan ECB"
+  ],
+  "E616": [
+    "x",
+    "PKCS7/ANSI X9.23/ISO 7816/sıfır dolgu tespiti (yapılandırma ve çözülmüş metinden)"
+  ],
+  "E617": [
+    "x",
+    "Shannon entropisi, kayan pencere entropisi, blob raporu"
+  ],
+  "E618": [
+    "x",
+    "Alfabeye göre normalize entropi eşikleri: text/hex/base64/encoded/random kararı"
+  ],
+  "E619": [
+    "x",
+    "CompressionStream deflate oranı, yoksa LZ77 tahmini"
+  ],
+  "E620": [
+    "x",
+    "Base64/base64url/hex/base32/base85 alfabe ailesi ve entropi ile blob tespiti"
+  ],
+  "E621": [
+    "x",
+    "Yapısal çözücülerle katmanlı kodlama zinciri ve katman sayısı"
+  ],
+  "E622": [
+    "x",
+    "Yazı sistemi + durak kelimesi/özel harf ile dil (en/tr/de/fr/es/it/pt/nl) ve doğal metin kararı"
+  ],
+  "E623": [
+    "x",
+    "Karakter sınıfları, alfabe boyutu, en sık karakterler"
+  ],
+  "E624": [
+    "x",
+    "8/16 baytlık tekrar eden blok sayımı (ECB)"
+  ],
+  "E625": [
+    "x",
+    "NIST frekans (monobit) ve koşu testleri, bayt ki-kare, seri korelasyon"
+  ],
+  "E626": [
+    "x",
+    "Normalize Hamming ile anahtar uzunluğu + sütun başına İngilizce frekans korelasyonu"
+  ],
+  "E627": [
+    "x",
+    "Tekrar eden trigram uzaklıkları, EBOB ve çarpan oylaması"
+  ],
+  "E628": [
+    "x",
+    "Harf ve bayt tesadüf indeksi"
+  ],
+  "E629": [
+    "x",
+    "Crib'lerle (function, https://, var …) tekrarlı XOR anahtar akışı kurtarma"
+  ],
+  "E630": [
+    "x",
+    "Tek bayt XOR/toplama/artan XOR, bit döndürme, 16 bit XOR (65536), afin şifre kaba kuvveti"
+  ]
+}

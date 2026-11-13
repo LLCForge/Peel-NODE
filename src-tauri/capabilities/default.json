@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "PEEL penceresi: yalnızca çekirdek pencere izinleri; dosya sistemi, kabuk ve ağ eklentisi yok.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

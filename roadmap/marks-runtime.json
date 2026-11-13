@@ -1,0 +1,294 @@
+{
+  "46": [
+    "x",
+    "Rapor > Çalışma anı > Sandbox ayarları: profil seçici; ayar tüm sandbox isteklerine (temel ve aday aynı) uygulanır"
+  ],
+  "47": [
+    "x",
+    "Araçlar > Profilleri karşılaştır: iki profil yan yana (konsol, ağ, parmak izi, taint, yalnızca bir tarafta görülenler, etki farkı)"
+  ],
+  "50": [
+    "x",
+    "Ayarlardan zaman (datetime) ve tohum; determinizm denetimi zamana/rastgeleliğe bağımlılığı raporlar"
+  ],
+  "53": [
+    "x",
+    "Canvas fillText/measureText/getImageData/toDataURL, WebGL getParameter/getExtension, Audio düğümleri ve startRendering çağrı kaydı"
+  ],
+  "54": [
+    "x",
+    "Gölge bellekle değer tabanlı taint: çerez/depolama/navigator/konum/WebGL değerinin ağ çıkışında ham, URI, base64, hex ya da ters görünmesi"
+  ],
+  "55": [
+    "x",
+    "Analiz çalıştırmasında eval (doğrudan eval yerel kapsamı korunarak), Function/AsyncFunction/GeneratorFunction, setTimeout(string), document.write ve script metni yakalanır"
+  ],
+  "58": [
+    "x",
+    "Oturum anlık görüntüsü: kayıt + yığın grafiği; geri yükleme yeniden oynatıp yığın özetini doğrular (src/sandbox/replay.js)"
+  ],
+  "59": [
+    "x",
+    "peel-replay kaydı taze runtime'da adım adım yeniden oynatılır, etki ve yığın özetleri karşılaştırılır, sapma adımı bildirilir"
+  ],
+  "61": [
+    "x",
+    "Enstrümante çıktı çalıştırması: çağıran→çağrılan kenarları ve sayıları, katmanlı SVG + tablo"
+  ],
+  "62": [
+    "x",
+    "Deyim sayaçlarıyla satır coverage'ı; çıktı kodu çalışan/çalışmayan satır renkleriyle gösterilir"
+  ],
+  "63": [
+    "x",
+    "Döngü sayaçları, zaman aşımında son döngü ve çağrı yığını; statik debugger/zamanlayıcı/devtools/zamanlama/sonsuz döngü tuzakları"
+  ],
+  "64": [
+    "x",
+    "Gömülü ayrıştırıcıyla WebAssembly stub'ı: import/export imzaları, bellek/tablo, sağlanan import'lar, export çağrıları; koddaki gömülü modüller statik"
+  ],
+  "65": [
+    "x",
+    "Açık onayla iki katmanlı sandbox iframe (allow-scripts, opak köken) + CSP: ağ ve dış yönlendirme engellenir, WebRTC/iç içe çerçeve kapatılır; tarayıcıda doğrulandı"
+  ],
+  "66": [
+    "x",
+    "Blob/data URL worker kodu ayrı sandbox bağlamında (pencere yok) çalışır; mesajlar ana programla 3 tura kadar gidip gelir; dış URL yalnızca sahte yanıttan"
+  ],
+  "67": [
+    "x",
+    "Ayarlardan çerez ve localStorage (JSON) doldurma"
+  ],
+  "70": [
+    "x",
+    "Ayarlardan bellek (16–1024 MB) ve süre (500–60000 ms) sınırları; tüm sandbox isteklerine uygulanır"
+  ],
+  "176": [
+    "x",
+    "Güven skoru: doğrulama düzeyi, geri almalar, gözlem dönüşümleri, coverage, başarı metriği ve denetim sonuçlarından, gerekçeleriyle"
+  ],
+  "177": [
+    "x",
+    "Gözlemle (sandbox pass'leri) üretilen literal'ler olaylara kaydedilir, çıktıda vurgulu renkle gösterilir"
+  ],
+  "178": [
+    "x",
+    "Gramer üretimli ortamlarda girdi/çıktı diferansiyel fuzz; ayrışan ortam küçültülür; doğrulama orkestrasyonu ve Araçlar'da"
+  ],
+  "179": [
+    "x",
+    "Üst seviye fonksiyonlar eşleştirilip iki bağlamda sembolik + gramer argümanlarıyla çağrılır; SMT kanıtı ve küçültülmüş karşı örnek"
+  ],
+  "181": [
+    "x",
+    "Pass başına low/medium/high rozeti ve gerekçeleri (gözlem, geri alma, doğrulama düzeyi, yeniden yapılandırma)"
+  ],
+  "182": [
+    "x",
+    "19 durumluk kaçış paketi; motor bekçisi (tarayıcı Web Worker, Node/CLI worker_thread) kilitlenen motoru sonlandırıp yeniden başlatır ve zaman aşımı döndürür; statik ReDoS dedektörü kalıpları çalıştırmadan önce bildirir; felaket regex durumu testte"
+  ],
+  "184": [
+    "x",
+    "Başarı metriği 0–100: decoder çağrısı, _0x, VM işareti ve boyut azalımının ağırlıklı toplamı"
+  ],
+  "185": [
+    "x",
+    "Maskelenmiş Markdown issue şablonu üreteci (kopyala/indir, URL'ye gömülmez) + .github/ISSUE_TEMPLATE/wrong-result.md"
+  ],
+  "186": [
+    "x",
+    "Deobfuscation iki kez çalıştırılıp çıktı SHA-256'sı karşılaştırılır (Araçlar > Determinizm)"
+  ],
+  "188": [
+    "x",
+    "QuickJS bellek kullanımı her çalıştırmada ölçülür; rapor göstergesi ve telemetri tepe değeri"
+  ],
+  "189": [
+    "x",
+    "CycloneDX SBOM betiği + etikette Sigstore köken/SBOM tasdikli, SHA256SUMS'lu sürüm iş akışı; iş akışı CI'da henüz çalıştırılmadı"
+  ],
+  "E701": [
+    "x",
+    "Yerleşik CDCL + bit-blasting SMT ile int32 fonksiyon denkliği kanıtı; fonksiyon denkliği denetiminde kullanılır"
+  ],
+  "E702": [
+    "x",
+    "boundedCheck: döngüleri k kez açarak özellik denetimi, sınır aşımı raporlanır"
+  ],
+  "E703": [
+    "x",
+    "divergingInput: iki fonksiyonun ayrıştığı girdi ve iki yolun koşulu"
+  ],
+  "E704": [
+    "x",
+    "Karşı örnek tanığı terim değerlendirmesiyle doğrulanır; somut çalıştırmayla teyit edilir"
+  ],
+  "E705": [
+    "x",
+    "Çözücü modelinde bit bit küçültme + test tabanlı argüman küçültme + fuzz ortamı küçültme"
+  ],
+  "E706": [
+    "x",
+    "Her pass sonrası parse + console + gözlenebilir etkiler temel çalıştırmayla karşılaştırılır"
+  ],
+  "E707": [
+    "x",
+    "Zayıf bisimülasyon: olay türleri etiketli adım, zamanlayıcılar τ; adım adım etki karşılaştırması"
+  ],
+  "E708": [
+    "x",
+    "Gözlenebilir etki dizilerinin birebir denkliği ve ilk ayrışma noktası"
+  ],
+  "E709": [
+    "x",
+    "Aynı yapılandırmayla k çalıştırma + zaman/tohum duyarlılığı"
+  ],
+  "E710": [
+    "x",
+    "Çıktı yeniden çözülür, SHA-256 eşitliği ve değişen satırlar/pass'ler"
+  ],
+  "E711": [
+    "x",
+    "Etki vektörü: tür sayımları, hedef kümesi, iz özeti"
+  ],
+  "E712": [
+    "x",
+    "Biçimden bağımsız, gözlenen davranıştan semantik hash"
+  ],
+  "E713": [
+    "x",
+    "Semantik hash sınıfları + Jaccard benzerliğiyle birleştirme"
+  ],
+  "E714": [
+    "x",
+    "selectRegression + scripts/regress-select.js: değişen pass kaynağına dokunan fixture'lar ve sınıf temsilcileri"
+  ],
+  "E715": [
+    "x",
+    "Girdi/çıktı aynı ortamda çalıştırılıp etki farkı; doğrulama raporunda"
+  ],
+  "E716": [
+    "x",
+    "Önce/sonra çiftlerinden anti-unification ile kural sentezi, SMT/sandbox testiyle doğrulama, koda uygulama; Rapor > Araçlar > Kural sentezi"
+  ],
+  "E717": [
+    "x",
+    "Kod + SHA-256 + dönüşüm/doğrulama iddiaları ECDSA P-256 ile imzalı paket; checkBundle imza/özet/davranışı yeniden doğrular"
+  ],
+  "E718": [
+    "x",
+    "Kabul edilen her değişiklik için özetler, boyut farkı, doğrulama düzeyi, gözlem değerleri; raporda gerekçe tablosu"
+  ],
+  "E719": [
+    "x",
+    "Süre/çalıştırma/çözücü bütçesi; aşılınca denetimler 'bütçe' ile atlanır"
+  ],
+  "E720": [
+    "x",
+    "none/parse/behaviour/effects/functions/proof seviyeleri; ayarlardan seçilir, pass doğrulaması ve son doğrulama buna göre"
+  ],
+  "E721": [
+    "x",
+    "Başarısız denetim, karşı örnek, kanıt, şüpheli pass'ler ve yeniden üretim adımları (nesne + Markdown)"
+  ],
+  "E723": [
+    "x",
+    "Risk sinyali başına bir seviye yükseltme; etki ayrışması görülünce plan yeniden kurulur"
+  ],
+  "E724": [
+    "x",
+    "z3-solver@5.4.1: Node/CLI'da doğrudan; tarayıcıda sayfa cross-origin isolated ise (vite COOP/COEP başlıkları, public/_headers) tembel yüklenen worker'da, değilse yerleşik CDCL çözücü; tarayıcıda doğrulandı"
+  ],
+  "E725": [
+    "x",
+    "Çatışma/süre bütçesi, Z3 zaman aşımı parametresi, 'unknown' sonucu ve boşta Z3 thread kapatma"
+  ],
+  "E726": [
+    "x",
+    "Yığın grafiği anlık görüntüsü ve yeniden oynatmayla doğrulanan geri yükleme"
+  ],
+  "E727": [
+    "x",
+    "Deterministik sandbox üzerinde kayıt/yeniden oynatma, adım başına özet karşılaştırması"
+  ],
+  "E728": [
+    "x",
+    "Kaydırıcıyla adımlar arası gezinme, adım etkileri ve yığın farkı; travel() ile k. adım durumu"
+  ],
+  "E729": [
+    "x",
+    "Tüm stub'larda sıralı etki günlüğü (ağ, depolama, çerez, DOM, diyalog, geçmiş, worker, WASM, kripto, parmak izi…)"
+  ],
+  "E730": [
+    "x",
+    "__peel.onRead/onWrite/onCall sandbox API'si + ayarlardaki izlenen yollar"
+  ],
+  "E731": [
+    "x",
+    "document/navigator/screen/location proxy'lerinde okuma sayımı, yazma etkisi ve taint etiketi"
+  ],
+  "E732": [
+    "x",
+    "Gölge bellek: nesneler için WeakMap, string'ler için değer tablosu; taint kaynak etiketleri"
+  ],
+  "E733": [
+    "x",
+    "Sembolik/somut parametre ve global enjeksiyonu (execute seçenekleri)"
+  ],
+  "E734": [
+    "x",
+    "Artımlı, önbellekli kısıt deposu; olanaksız yollar budanır"
+  ],
+  "E735": [
+    "x",
+    "if/döngü/ternary/mantıksal işleçlerde yol çatallama"
+  ],
+  "E736": [
+    "x",
+    "Birleşme noktalarında ite ile yol birleştirme"
+  ],
+  "E737": [
+    "x",
+    "Yol/derinlik/terim sınırları; kesilen yollar 'limit' olarak raporlanır"
+  ],
+  "E738": [
+    "x",
+    "Enstrümante coverage ile yeni deyim açan ortamlar korpusa girer ve mutasyonla çoğaltılır"
+  ],
+  "E739": [
+    "x",
+    "Her uygulanabilir yol için çözücüyle argüman üretimi; fonksiyon denkliğinde kullanılır"
+  ],
+  "E740": [
+    "x",
+    "Tohumlu gramer üreteci: sayı, string, JSON, URL, çerez, depolama, yanıt gövdesi, ortam"
+  ],
+  "E741": [
+    "x",
+    "Operatör/literal/koşul/deyim/dönüş mutasyonları; mutant öldürme oranıyla doğrulama gücü"
+  ],
+  "E742": [
+    "x",
+    "Normalize imzayla çökme gruplama ve en küçük yeniden üretici ortam"
+  ],
+  "E743": [
+    "x",
+    "LCS hizalamalı etki farkı motoru, add/del/change birleştirme"
+  ],
+  "E744": [
+    "x",
+    "peel-replay v1 biçimi, yapısal doğrulama ve kod özeti denetimi"
+  ],
+  "E745": [
+    "x",
+    "Oturum JSON'a serileştirilir; geri yüklemede yığın özeti doğrulanır"
+  ],
+  "E749": [
+    "x",
+    "İstek türü başına sayı/süre/başarısızlık, bellek tepe değeri, kesme ve sızan runtime sayısı; raporda tablo"
+  ],
+  "E750": [
+    "x",
+    "Serileştirilebilir eklentiler (prelude + collect) mesajla ya da createHost seçeneğiyle"
+  ]
+}

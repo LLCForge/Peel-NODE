@@ -1,0 +1,76 @@
+// javascript-obfuscator 0.18.8, JavaScriptObfuscate demo_compact.js ayarları: {"compact":false}
+// NEEDLES: "https://api.example.com/v1/collect" | "alpha" | "production" | toUpperCase | console.log
+var _0x5d7c = [
+    'inc',
+    'beta',
+    'gamma',
+    'map',
+    'toUpperCase',
+    'log',
+    'endpoint',
+    'retries',
+    'join',
+    'debug',
+    'production',
+    'Hello,\x20',
+    'https://api.example.com/v1/collect'
+];
+(function (_0x369005, _0x2820c0) {
+    var _0x20a237 = function (_0x5b2154) {
+        while (--_0x5b2154) {
+            _0x369005['push'](_0x369005['shift']());
+        }
+    };
+    _0x20a237(++_0x2820c0);
+}(_0x5d7c, 0x143));
+var _0x5ebf = function (_0x16e132, _0x40c6e4) {
+    _0x16e132 = _0x16e132 - 0x0;
+    var _0x2d499d = _0x5d7c[_0x16e132];
+    return _0x2d499d;
+};
+function greet(_0x5e1021) {
+    return _0x5ebf('0x0') + _0x5e1021 + '!';
+}
+var config = {
+    'endpoint': _0x5ebf('0x1'),
+    'retries': 0x3,
+    'debug': ![]
+};
+function sum(_0x338e14) {
+    var _0xdcab25 = 0x0;
+    for (var _0xca7cd7 = 0x0; _0xca7cd7 < _0x338e14['length']; _0xca7cd7++)
+        _0xdcab25 += _0x338e14[_0xca7cd7];
+    return _0xdcab25;
+}
+class Counter {
+    constructor() {
+        this['n'] = 0x0;
+    }
+    [_0x5ebf('0x2')]() {
+        this['n']++;
+        return this['n'];
+    }
+}
+var c = new Counter();
+c['inc']();
+c[_0x5ebf('0x2')]();
+var words = [
+    'alpha',
+    _0x5ebf('0x3'),
+    _0x5ebf('0x4')
+][_0x5ebf('0x5')](function (_0x56b0e9) {
+    return _0x56b0e9[_0x5ebf('0x6')]();
+});
+console[_0x5ebf('0x7')](greet('PEEL'));
+console['log'](config[_0x5ebf('0x8')], config[_0x5ebf('0x9')] * 0x2, sum([
+    0x1,
+    0x2,
+    0x3,
+    0x4
+]));
+console[_0x5ebf('0x7')](words[_0x5ebf('0xa')]('-'), c['n'], typeof config[_0x5ebf('0xb')]);
+if (config['debug']) {
+    console[_0x5ebf('0x7')]('debug\x20mode');
+} else {
+    console[_0x5ebf('0x7')](_0x5ebf('0xc'));
+}

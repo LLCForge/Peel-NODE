@@ -1,0 +1,5 @@
+node_modules/
+*.tgz
+*.vsix
+# peel-js yerel tarball olarak kurulur; kilit dosyası her paketlemede değişen bütünlük özetini taşır
+package-lock.json

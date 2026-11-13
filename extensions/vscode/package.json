@@ -1,0 +1,74 @@
+{
+  "name": "peel-vscode",
+  "displayName": "PEEL JavaScript Deobfuscator",
+  "description": "Obfuscated JavaScript kodunu editörde çözer, analiz eder ve sürümleri karşılaştırır. Kod cihazdan çıkmaz.",
+  "version": "0.1.0",
+  "publisher": "llcforge",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LLCForge/Peel-JS.git",
+    "directory": "extensions/vscode"
+  },
+  "engines": {
+    "vscode": "^1.90.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "deobfuscator",
+    "javascript",
+    "malware",
+    "reverse engineering",
+    "security"
+  ],
+  "main": "./extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  },
+  "contributes": {
+    "commands": [
+      { "command": "peel.deobfuscateFile", "title": "PEEL: Dosyayı çöz (Deobfuscate file)", "category": "PEEL" },
+      { "command": "peel.deobfuscateSelection", "title": "PEEL: Seçimi çöz (Deobfuscate selection)", "category": "PEEL" },
+      { "command": "peel.analyze", "title": "PEEL: Çöz ve analiz et (Analyze)", "category": "PEEL" },
+      { "command": "peel.compare", "title": "PEEL: Başka sürümle karşılaştır (Compare versions)", "category": "PEEL" }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "peel.deobfuscateSelection", "when": "editorHasSelection && editorLangId =~ /javascript/", "group": "peel@1" },
+        { "command": "peel.deobfuscateFile", "when": "editorLangId =~ /javascript/", "group": "peel@2" },
+        { "command": "peel.analyze", "when": "editorLangId =~ /javascript/", "group": "peel@3" }
+      ],
+      "explorer/context": [
+        { "command": "peel.compare", "when": "resourceExtname =~ /\\.(js|mjs|cjs)$/", "group": "peel@1" }
+      ]
+    },
+    "configuration": {
+      "title": "PEEL",
+      "properties": {
+        "peel.level": { "type": "integer", "enum": [1, 2, 3, 4], "default": 4, "description": "Pass seviyesi: 1 güvenli, 2 normal, 3 agresif, 4 maksimum." },
+        "peel.sandbox": { "type": "boolean", "default": true, "description": "QuickJS sandbox'ını kullan (string dizisi çözücüleri, davranış doğrulaması)." },
+        "peel.deep": { "type": "boolean", "default": true, "description": "Her pass'ten sonra davranışı karşılaştır, değiştiren pass'i geri al." },
+        "peel.replaceSelection": { "type": "boolean", "default": false, "description": "Seçimi çözerken sonucu yeni sekme yerine seçimin yerine yaz." },
+        "peel.language": { "type": "string", "enum": ["tr", "en"], "default": "tr", "description": "Rapor dili." }
+      }
+    }
+  },
+  "scripts": {
+    "pack-core": "npm pack ../.. --pack-destination .",
+    "package": "vsce package --no-yarn"
+  },
+  "dependencies": {
+    "peel-js": "file:peel-js-0.1.0.tgz"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "3.2.1"
+  }
+}

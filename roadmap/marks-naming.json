@@ -1,0 +1,166 @@
+{
+  "71": [
+    "x",
+    "src/naming/llm.js: WebGPU + @mlc-ai/web-llm, model yalnızca kullanıcı düğmeye basınca dinamik import ile yüklenir; WebGPU/model yoksa kural tabanlı önerilere düşer (Adlar sekmesi)"
+  ],
+  "72": [
+    "x",
+    "src/naming/suggest.js + 95-rename: dönüş tipi, özellik adları, API çağrıları ve string içeriğinden ad; tüm anlamsız adlar için öneri listesi"
+  ],
+  "73": [
+    "x",
+    "99-annotate: her fonksiyona @summary açıklaması (ağ, DOM, depolama, olay, döngü, çağrılar)"
+  ],
+  "75": [
+    "x",
+    "src/naming/libversion.js: banner/@version yorumları ve VERSION/version/fn.jquery sabitlerinden sürüm; Özet sekmesi"
+  ],
+  "76": [
+    "x",
+    "src/naming/types.js: literal, bilinen API, kullanım ve çağrı yeri tiplerinden çıkarım; JSDoc @param/@returns ve .d.ts (Tipler sekmesi, CLI --dts)"
+  ],
+  "77": [
+    "x",
+    "96-classes: prototype atamaları class'a; new/instanceof dışı kullanım, for-in/yansıma, metodun çağrı dışı okunması ve sıkı mod farkı varsa atlanır"
+  ],
+  "78": [
+    "x",
+    "97-let-const/modern-syntax/destructure: let/const, yerleşik callback'lerde ok fonksiyonu, primitive kanıtlı şablon string, kısa özellik/metot, nesne ayrıştırma"
+  ],
+  "79": [
+    "x",
+    "96-babel + naming/regenerator.js + naming/babel-extra.js + 96-classes: klasik ve 7.27+ kompakt regenerator → function*/async; _asyncToGenerator; _createClass/_inherits/_callSuper/_createSuper/_superPropGet/_get ve gevşek _inheritsLoose/_proto/S.call(this) → class extends + super; _createForOfIteratorHelper(Loose) ve dizi indeks döngüsü → for-of; _slicedToArray/_toArray → dizi deseni; _toConsumableArray, [].concat, f.apply(o, [...]) → yayma; _objectSpread/_defineProperty/(_o = {}, …) → nesne literali; _objectWithoutProperties(Loose) → { a, ...rest }; _typeof → typeof; _extends → yayma (kaynakta kendi __proto__ olamıyorsa, yoksa Object.assign). Gerçek Babel 7.20/7.24/7.28 ve loose çıktılı fixture'lar. Kanıtsız durumlar atlanır: gevşek yardımcının generator üzerinde döngüsü (break'te return() farkı), dizi olduğu bilinmeyen _arrayLikeToArray/apply"
+  ],
+  "80": [
+    "x",
+    "src/naming/explain.js: deyim başına TR/EN açıklama, Satır açıklaması sekmesi"
+  ],
+  "81": [
+    "x",
+    "summary.programSummary: tehdit, kütüphane ve çözülemeyenlerle tek paragraf; Özet sekmesi"
+  ],
+  "82": [
+    "x",
+    "98-magic: zaman, tuş kodu, HTTP durumu, readyState, nodeType, karakter kodu ve kripto/hash sabitleri adlandırılmış const olur"
+  ],
+  "84": [
+    "x",
+    "src/naming/deadcode.js: erişilemeyen kod, sabit koşullu dallar, çağrılmayan fonksiyonlar katlanmış <details> olarak (Ölü kod sekmesi)"
+  ],
+  "85": [
+    "x",
+    "98-dedupe: aynı kapsamda yapısal olarak eş fonksiyonlar, yalnızca çağrılan kopya birleşir"
+  ],
+  "86": [
+    "x",
+    "Paket ayırma tek uygulama: core/bundle.js (webpack, browserify, esbuild, kaynak haritalı, AMD eklendi; report.engine.bundle ve CLI --split); Anlamlandırma > Modüller sekmesi tek tek ya da ZIP indirme (naming/zip.js)"
+  ],
+  "87": [
+    "x",
+    "ui/naming/state.js: girdi özetine bağlı ad haritası tarayıcıda saklanır, her çözümde ve anında uygulanır; .peel projesinin adları (integrations/project.js applyRenames) aynı scope-güvenli yeniden adlandırıcıyı kullanır"
+  ],
+  "88": [
+    "x",
+    "names.serializeNameMap/parseNameMap: JSON dışa/içe aktarma (doğrulamalı), CLI --names"
+  ],
+  "89": [
+    "x",
+    "Tek uygulama araç panelindeki grafik görünümü (ui/graph-model.js cfg + graph-view.js); anlamlandırma panelindeki kopya kaldırıldı"
+  ],
+  "90": [
+    "x",
+    "Ulaşan tanımlar ve def-use zincirleri analysis/defs.js (semantik altyapı) üzerinden; Anlamlandırma > Tanım-kullanım sekmesi bağlama başına tanım/kullanım satırlarını gösterir"
+  ],
+  "91": [
+    "x",
+    "src/naming/sequence.js + SVG: yerel çağrılar, dış API katılımcıları, opt/loop çerçeveleri, callback'ler"
+  ],
+  "92": [
+    "x",
+    "src/naming/metrics.js: önce/sonra isim, satır, karmaşıklık, iç içelik, gizleme izi ölçümleri"
+  ],
+  "93": [
+    "x",
+    "fonksiyon başına döngüsel karmaşıklıkla satır ısı haritası (Okunabilirlik sekmesi)"
+  ],
+  "94": [
+    "x",
+    "naming/unresolved.js: temel kalıntılar ui/code-intel.js remnants ile aynı tanım; tablo erişimi, kodlanmış/kaçışlı string, string zamanlayıcı, debugger, with, VM eklenir; satır ve nedenle rapor"
+  ],
+  "95": [
+    "x",
+    "src/naming/diffnotes.js: pipeline anlık görüntüleri arasında pass açıklamalı fark blokları"
+  ],
+  "E222": [
+    "x",
+    "dizi metotları, then/catch, addEventListener, Promise, replace callback parametre adları"
+  ],
+  "E223": [
+    "x",
+    "çıkarılan tipten ad (el, event, response, list, num...)"
+  ],
+  "E224": [
+    "x",
+    "fonksiyon fiilleri: fetch/send/save/load/render/decode/is.../create/compute"
+  ],
+  "E225": [
+    "x",
+    "getElementById/querySelector/createElement argümanından eleman adı"
+  ],
+  "E226": [
+    "x",
+    "addEventListener ve onX atamalarından onClick gibi işleyici adları"
+  ],
+  "E227": [
+    "x",
+    "with yalnızca gövdesini kapsayan kapsamları korur; diğer binding'ler adlandırılır"
+  ],
+  "E228": [
+    "x",
+    "window/self/globalThis/this.x ile erişilen ya da dinamik global erişimli programlarda global'ler korunur"
+  ],
+  "E230": [
+    "x",
+    "doğrudan eval yalnızca kendi kapsam zincirini, dolaylı eval/Function/string zamanlayıcı yalnızca global'leri korur"
+  ],
+  "E231": [
+    "x",
+    "tüm dosyalara uygulanan kullanıcı sözlüğü (Adlar sekmesi), pipeline naming.names"
+  ],
+  "E232": [
+    "x",
+    "Seçenekler: orijinal adı bildirimin yanında /* _0x... */ yorumu olarak saklama"
+  ],
+  "E233": [
+    "x",
+    "97-let-const: TDZ, blok kapsamı, döngü kapanışı ve tekrar bildirimi kanıtlanınca"
+  ],
+  "E234": [
+    "x",
+    "98-extract: aynı fonksiyonda ≥3 deyimlik tekrar, kapanış güvenli yardımcıya çıkarılır"
+  ],
+  "E235": [
+    "x",
+    "97-merge-vars: bildirim+ilk atama ve sabit takma ad birleştirme"
+  ],
+  "E236": [
+    "x",
+    "97-move-decls: literal başlangıçlı bildirim aynı bloktaki ilk kullanımın önüne"
+  ],
+  "E237": [
+    "x",
+    "99-comments: kaybolan girdi yorumları bağlı bildirim aynı adla duruyorsa geri gelir; dosya başı yorumları başa"
+  ],
+  "E238": [
+    "x",
+    "99-annotate: üst düzey deyim kategorisi değiştikçe // ── Bölüm ── başlıkları"
+  ],
+  "E239": [
+    "x",
+    "emit.FORMAT_PROFILES (default, compact, wide, standard, airbnb, tabs) arayüzün tek biçim ayarına (ui/settings.js format, useTabs eklendi) yazılır; CLI --format ve pipeline format seçeneği"
+  ],
+  "E240": [
+    "x",
+    "0–100 okunabilirlik skoru, önce/sonra ve fark"
+  ]
+}

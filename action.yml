@@ -1,0 +1,72 @@
+name: PEEL JavaScript Deobfuscator
+description: Obfuscated JavaScript dosyalarını çözer, tehdit raporu ve SARIF üretir; kod hiçbir yere yüklenmez.
+author: LLCForge
+branding:
+  icon: unlock
+  color: yellow
+
+inputs:
+  files:
+    description: Çözülecek dosyalar (boşluk/satır ile ayrılmış yollar ya da glob desenleri, ör. "dist/**/*.js")
+    required: true
+  out-dir:
+    description: Çözülmüş dosyaların yazılacağı dizin
+    required: false
+    default: peel-out
+  level:
+    description: Pass seviyesi (1-4)
+    required: false
+    default: '4'
+  sarif:
+    description: SARIF üret (true/false); dosyalar out-dir altına yazılır
+    required: false
+    default: 'true'
+  html:
+    description: Her dosya için önce/sonra HTML raporu üret (true/false)
+    required: false
+    default: 'false'
+  fail-on:
+    description: Risk bu düzeye ulaşırsa adımı başarısız say (none, low, medium, high)
+    required: false
+    default: none
+  rules:
+    description: Dönüşüm kuralları dosyası (isteğe bağlı)
+    required: false
+    default: ''
+
+outputs:
+  out-dir:
+    description: Çözülmüş dosyaların dizini
+    value: ${{ steps.peel.outputs.out-dir }}
+  sarif:
+    description: SARIF dosyalarının bulunduğu dizin (github/codeql-action/upload-sarif için)
+    value: ${{ steps.peel.outputs.sarif }}
+  max-risk:
+    description: En yüksek risk skoru (0-100)
+    value: ${{ steps.peel.outputs.max-risk }}
+  files:
+    description: İşlenen dosya sayısı
+    value: ${{ steps.peel.outputs.files }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    - name: PEEL bağımlılıkları
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+    - name: PEEL
+      id: peel
+      shell: bash
+      env:
+        PEEL_FILES: ${{ inputs.files }}
+        PEEL_OUT_DIR: ${{ inputs.out-dir }}
+        PEEL_LEVEL: ${{ inputs.level }}
+        PEEL_SARIF: ${{ inputs.sarif }}
+        PEEL_HTML: ${{ inputs.html }}
+        PEEL_FAIL_ON: ${{ inputs.fail-on }}
+        PEEL_RULES: ${{ inputs.rules }}
+      run: node "${{ github.action_path }}/action/run.js"

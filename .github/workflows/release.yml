@@ -1,0 +1,47 @@
+# I189: imzalı sürümler ve SBOM. "v*" etiketi itildiğinde: kurulum (kilit dosyasıyla), testler, üretim derlemesi,
+# CycloneDX SBOM, SHA-256 özetleri, Sigstore ile derleme kökeni (provenance) ve SBOM tasdiki, GitHub sürümüne yükleme.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write      # sürüm oluşturma
+  id-token: write      # Sigstore anahtarsız imza (OIDC)
+  attestations: write  # build provenance / SBOM tasdiki
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: SBOM (CycloneDX)
+        run: node scripts/sbom.js --prod -o peel-sbom.cdx.json
+      - name: Paket ve özetler
+        run: |
+          tar -czf peel-dist.tar.gz -C dist .
+          sha256sum peel-dist.tar.gz peel-sbom.cdx.json > SHA256SUMS
+      - name: Derleme kökeni tasdiki (Sigstore)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            peel-dist.tar.gz
+            peel-sbom.cdx.json
+            SHA256SUMS
+      - name: SBOM tasdiki
+        uses: actions/attest-sbom@v2
+        with:
+          subject-path: peel-dist.tar.gz
+          sbom-path: peel-sbom.cdx.json
+      - name: Sürüm
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" peel-dist.tar.gz peel-sbom.cdx.json SHA256SUMS --verify-tag --generate-notes

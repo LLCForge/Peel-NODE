@@ -1,0 +1,8 @@
+var _0x16 = 0;
+function _0x17() { _0x17 = function () {}; }
+_0x17((_0x16 = 1), (_0x16 = 2));
+console.log(_0x16);
+// LEVEL: 3
+// EXPECT: _0x16 = 1;
+// EXPECT: _0x16 = 2;
+// GONE: _0x17

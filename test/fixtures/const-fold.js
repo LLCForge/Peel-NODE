@@ -1,0 +1,17 @@
+var a = !0x1;
+var b = "ab" + "cd";
+var c = 0x10 * 3 + 7;
+var e = "xyz".split("").reverse().join("");
+var f = atob("aGVsbG8=");
+var g = typeof 5;
+var h = "constructor" in {};
+var i = 3 > 2 ? "yes" : "no";
+console.log(a, b, c, e, f, g, h, i);
+// EXPECT: a = false;
+// EXPECT: b = "abcd";
+// EXPECT: c = 55;
+// EXPECT: e = "zyx";
+// EXPECT: f = "hello";
+// EXPECT: g = "number";
+// EXPECT: h = true;
+// EXPECT: i = "yes";

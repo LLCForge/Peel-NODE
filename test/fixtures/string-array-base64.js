@@ -1,0 +1,5 @@
+var _0x10 = ["bG9n", "SGVsbG8=", "IHdvcmxk", "IQ==", "YWE="];
+function _0x11(i) { return atob(_0x10[i - 0x0]); }
+console[_0x11(0x0)](_0x11(0x1) + _0x11(0x2) + _0x11(0x3));
+// EXPECT: console.log("Hello world!");
+// GONE: atob

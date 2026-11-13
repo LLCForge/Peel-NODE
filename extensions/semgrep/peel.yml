@@ -1,0 +1,124 @@
+# PEEL varsayılan Semgrep kuralları: çözülmüş (deobfuscated) çıktıda sık görülen zararlı davranış kalıpları.
+# Kullanım: peel input.js --semgrep            (bu dosya)
+#           peel input.js --semgrep kurallar.yml (kendi kuralların)
+#           semgrep scan --config extensions/semgrep/peel.yml peeled.js
+rules:
+  - id: peel-eval-dynamic
+    languages: [javascript]
+    severity: WARNING
+    message: eval dinamik bir değerle çağrılıyor; çalışma anında üretilen kod gizli yük taşıyabilir.
+    patterns:
+      - pattern: eval($X)
+      - pattern-not: eval("...")
+
+  - id: peel-function-constructor
+    languages: [javascript]
+    severity: WARNING
+    message: Function kurucusu ile kod üretiliyor (eval eşdeğeri).
+    pattern-either:
+      - pattern: new Function(...)
+      - pattern: Function(...)
+
+  - id: peel-decode-then-eval
+    languages: [javascript]
+    severity: ERROR
+    message: Kodlanmış veri çözülüp doğrudan çalıştırılıyor (dropper/loader kalıbı).
+    pattern-either:
+      - pattern: eval(atob(...))
+      - pattern: eval(unescape(...))
+      - pattern: eval(decodeURIComponent(...))
+      - pattern: eval(String.fromCharCode(...))
+      - pattern: new Function(atob(...))
+
+  - id: peel-string-timer
+    languages: [javascript]
+    severity: WARNING
+    message: setTimeout/setInterval string argümanla çağrılıyor (gizli eval).
+    pattern-either:
+      - pattern: setTimeout("...", ...)
+      - pattern: setInterval("...", ...)
+
+  - id: peel-document-write-script
+    languages: [javascript]
+    severity: WARNING
+    message: document.write ile sayfaya içerik enjekte ediliyor.
+    pattern-either:
+      - pattern: document.write(...)
+      - pattern: document.writeln(...)
+
+  - id: peel-cookie-exfiltration
+    languages: [javascript]
+    severity: ERROR
+    message: Çerezler okunup ağ isteğiyle dışarı gönderiliyor.
+    pattern-either:
+      - pattern: |
+          fetch($URL, {..., body: <... document.cookie ...>, ...})
+      - pattern: navigator.sendBeacon($URL, <... document.cookie ...>)
+      - pattern: |
+          $IMG.src = <... document.cookie ...>
+
+  - id: peel-beacon
+    languages: [javascript]
+    severity: INFO
+    message: navigator.sendBeacon ile arka planda veri gönderiliyor.
+    pattern: navigator.sendBeacon(...)
+
+  - id: peel-form-value-exfiltration
+    languages: [javascript]
+    severity: ERROR
+    message: Form alanı değeri okunup ağ isteğinin gövdesine konuyor (skimmer kalıbı).
+    patterns:
+      - pattern-inside: |
+          $V = $EL.value;
+          ...
+      - pattern-either:
+          - pattern: |
+              fetch($URL, {..., body: <... $V ...>, ...})
+          - pattern: navigator.sendBeacon($URL, <... $V ...>)
+          - pattern: $XHR.send(<... $V ...>)
+
+  - id: peel-keylogger
+    languages: [javascript]
+    severity: WARNING
+    message: Tuş olayları dinleniyor; olay işleyicisi tuş bilgisini topluyor olabilir.
+    pattern-either:
+      - pattern: $T.addEventListener("keydown", ...)
+      - pattern: $T.addEventListener("keypress", ...)
+      - pattern: $T.addEventListener("keyup", ...)
+      - pattern: $T.onkeydown = $F
+      - pattern: $T.onkeypress = $F
+
+  - id: peel-websocket-literal
+    languages: [javascript]
+    severity: INFO
+    message: Sabit bir adrese WebSocket bağlantısı açılıyor (komuta-kontrol kanalı olabilir).
+    pattern: new WebSocket("...")
+
+  - id: peel-wasm-instantiate
+    languages: [javascript]
+    severity: INFO
+    message: WebAssembly modülü yükleniyor (madenci ve VM tabanlı gizlemede yaygın).
+    pattern-either:
+      - pattern: WebAssembly.instantiate(...)
+      - pattern: WebAssembly.instantiateStreaming(...)
+      - pattern: WebAssembly.compile(...)
+
+  - id: peel-script-injection
+    languages: [javascript]
+    severity: WARNING
+    message: Dinamik olarak script etiketi oluşturulup sayfaya ekleniyor (ikinci aşama yükleme).
+    patterns:
+      - pattern-inside: |
+          $S = document.createElement("script");
+          ...
+      - pattern: $S.src = $URL
+
+  - id: peel-debugger-trap
+    languages: [javascript]
+    severity: INFO
+    message: Zamanlayıcı içinde debugger deyimi (analiz engelleme).
+    pattern-either:
+      - pattern: |
+          setInterval(function () { ... debugger; ... }, ...)
+      - pattern: |
+          setInterval(() => { ... debugger; ... }, ...)

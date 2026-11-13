@@ -1,0 +1,98 @@
+{
+  "OBF-1": [
+    "x",
+    "jfogs (varsayılan/reverse/zero/breakout) parametre taşıma IIFE'si geri çevrilir (iife-args)"
+  ],
+  "OBF-2": [
+    "x",
+    "JSFuck (eval'li, üst kapsamlı ve çalıştırılmayan ifade kipleri) gerçek örneklerle çözülür"
+  ],
+  "OBF-3": [
+    "x",
+    "AAEncode ve JJEncode (seçilebilir değişken adı dahil) ara çözücü zinciriyle çözülür"
+  ],
+  "OBF-4": [
+    "x",
+    "webpack eval devtool modülleri fonksiyon gövdesine açılır (eval-inline)"
+  ],
+  "OBF-5": [
+    "x",
+    "webpack paketi: modül tablosu, __webpack_require__ ve modül parametre adları yerinde geri verilir, modüller yorumla işaretlenir"
+  ],
+  "OBF-6": [
+    "x",
+    "webpack-obfuscator loader'ının modül başına string dizileri çözülür ve gövde içinden temizlenir"
+  ],
+  "OBF-7": [
+    "x",
+    "obfuscator.io stringArrayIndexesType: hexadecimal-numeric-string ve 0.18 sürümü \"0x..\" indeksleri"
+  ],
+  "OBF-8": [
+    "x",
+    "javascript-obfuscator 0.x selfDefending kalıpları kaldırılır"
+  ],
+  "OBF-9": [
+    "x",
+    "js-confuser lock.selfDefending ve lock.integrity denetimleri açılır, integrity kabuğu özgün fonksiyonla birleşir (integrity)"
+  ],
+  "OBF-10": [
+    "x",
+    "js-confuser RGF: eval'li string fonksiyon tablosu ve kabuk fonksiyonlar özgün gövdeye döner"
+  ],
+  "OBF-11": [
+    "x",
+    "js-confuser variableMasking rest dizisi parametre/değişkenlere açılır (confuser)"
+  ],
+  "OBF-12": [
+    "x",
+    "js-confuser flatten düz nesnesi ve program düzeyine taşınan gövde geri birleştirilir"
+  ],
+  "OBF-13": [
+    "x",
+    "js-confuser dispatcher payload/dağıtıcı yapısı adlı fonksiyonlara açılır (confuser)"
+  ],
+  "OBF-14": [
+    "x",
+    "Bench: javascript-obfuscator'ın tüm seçenekleri, js-confuser'ın tüm dönüşümleri ve test/corpus örnekleri"
+  ],
+  "OBF-15": [
+    "x",
+    "Araştırma belgesi: docs/research/obfuscators.md (8 depo, teknikler, lisanslar, kapsam)"
+  ],
+  "OBF-16": [
+    "x",
+    "obfuscator.io sarmalayıcı + kontrol akışı + selfDefending birleşimi (medium/high hazır ayarı, io-everything) tam çözülür"
+  ],
+  "OBF-17": [
+    "x",
+    "js-confuser controlFlowFlattening çıktısı küçülür ve okunur: kapsam nesneleri yerel değişkenlere bölünür (cff-scope)"
+  ],
+  "OBF-18": [
+    "x",
+    "js-confuser stringConcealing + CFF: ölü kalan çalışma anı yardımcısı silinir (confuser-runtime)"
+  ],
+  "OBF-19": [
+    "removed",
+    "obfuscator.io Pro vmObfuscation: dönüşüm yalnızca ücretli sunucu API'sinde çalışır, yerel örnek üretilemez"
+  ],
+  "OBF-20": [
+    "removed",
+    "Özgün tanımlayıcı/özellik adları (renameVariables, renameProperties, ad üreticileri): çıktıda saklanmaz, geri getirilemez"
+  ],
+  "OBF-21": [
+    "removed",
+    "Function.length: açılan kabukların length'i özgün parametre sayısına döner; gizlenmiş kodun 0 değerini korumak gizlemeyi geri getirmek olur"
+  ],
+  "OBF-22": [
+    "x",
+    "js-confuser flatten+dispatcher, opaquePredicates+deadCode ve low hazır ayarı tamamen okunur (0.6 KB)"
+  ],
+  "OBF-23": [
+    "x",
+    "Kapalı decoder (CFF string şifresi) hiç çalışmayan dallarda bağımsız sandbox ile çözülür"
+  ],
+  "OBF-24": [
+    "x",
+    "js-confuser high hazır ayarı: pack IIFE'sindeki makine kopyaları, kapsam nesnesine düzleştirilmiş dispatcher (fonksiyon ifadesi, payload kapsamda) ve string/global yardımcıları açılır; 0.2–1.2 MB çekimler 1–2 KB okunur program"
+  ]
+}
