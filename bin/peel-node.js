@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-// PEEL komut satırı: tarayıcıdakiyle aynı motor, aynı QuickJS sandbox.
-// Kullanım: peel <girdi.js> [-o çıktı.js] [--report rapor.json] ... | peel <alt komut> ...  (peel --help)
+// PEEL-NODE komut satırı: tarayıcıdakiyle aynı motor, aynı QuickJS sandbox.
+// Girdi .exe (pkg/nexe/SEA), .tgz (npm), .jsc (bytenode), .asar ya da .zip ise önce bellekte açılır,
+// sonra içindeki her JS dosyası çözülür.
+// Kullanım: peel-node <girdi> [-o çıktı.js | -d çıktı-dizini] [--report rapor.json] ... | peel-node <alt komut> ...  (--help)
 import { runCommand } from '../src/cli/run.js';
 import { findCommand } from '../src/cli/commands.js';
 import { UsageError } from '../src/cli/args.js';

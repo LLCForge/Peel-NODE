@@ -15,6 +15,7 @@ import { vmReport } from './vm/report.js';
 import { analyzeStringTables, crossCheck, serializeTables } from './vm/strtable.js';
 import { namingReport } from '../naming/index.js';
 import { engineReport } from './engine-report.js';
+import { nodeThreatReport } from '../node/threat.js';
 
 // Çözülmüş kod hakkında rapor: obfuscator tespiti, IOC'ler, şüpheli API'ler, ağ çağrıları,
 // fingerprint okumaları ve kalite metrikleri. Statik kısım AST'den, dinamik kısım sandbox'tan gelir.
@@ -162,7 +163,7 @@ function iocs(strings, code) {
 }
 
 async function runtimeScan(sandbox, text, config) {
-  if (!sandbox) return { ok: false, network: [], reads: [], console: [], crypto: [], thrown: [], post: null };
+  if (!sandbox) return { ok: false, network: [], reads: [], console: [], crypto: [], thrown: [], post: null, effects: [] };
   // program zaman aşımına uğrasa da kayıtlar sandbox'tan ayrıca okunur (core: net/reads).
   // Analiz sonrası betik: zamanlayıcılar ve olay işleyicileri tetiklenir, eklenen global'ler listelenir.
   const r = await sandbox.run(`try {\n${text}\n} catch (e) { __res.push({ __thrown: String(e) }); }`,
@@ -179,6 +180,8 @@ async function runtimeScan(sandbox, text, config) {
     crypto: r.crypto ?? [],
     thrown: res.filter((x) => x && x.__thrown).map((x) => x.__thrown),
     post: res.find((x) => x && x.__post) ?? null,
+    // etki günlüğü (Node taklitlerinin node.exec / node.fs.write / node.env.read … kayıtları dahil)
+    effects: (r.effects ?? []).slice(0, 3000),
   };
 }
 
@@ -195,14 +198,16 @@ async function stringTables(code, sandbox) {
   }
 }
 
-export async function analyze({ input, text, output, events = [], sandbox = null, config = null, stats = null, trace = null, verified = false, findings = null }) {
+export async function analyze({ input, text, output, events = [], sandbox = null, config = null, stats = null, trace = null, verified = false, findings = null, unpack = null }) {
   const before = staticScan(text ?? input);
   const after = staticScan(output);
   const runtime = await runtimeScan(sandbox, text ?? input, config);
   const passTimes = {};
   for (const e of events) passTimes[e.id] = (passTimes[e.id] ?? 0) + e.ms;
   const found = iocs(after.strings, output);
-  const classes = classify({ code: output, runtime, iocs: found, apis: after.apis });
+  // Node sınıfları (yaşam döngüsü, sızdırma, ters kabuk, indirici…) tarayıcı sınıflarıyla birlikte puanlanır
+  const node = nodeThreatReport({ code: output, effects: runtime.effects, iocs: found, unpack });
+  const classes = [...classify({ code: output, runtime, iocs: found, apis: after.apis }), ...node.classes].sort((a, b) => b.score - a.score);
   // E-U/E-V: semantik modeller, veri akışı ve analiz altyapısı (trace verilmişse pass kayıtları)
   const semantics = await analysisReport({ text: text ?? input, output, sandbox, config, trace });
   const report = {
@@ -216,7 +221,11 @@ export async function analyze({ input, text, output, events = [], sandbox = null
       missingGlobals: missingGlobals(runtime),
       yara: yaraRule({ strings: after.strings, iocs: found, hash: fnv1a(output) }),
       ids: idsRules({ runtime, iocs: found }),
+      // Node'a özgü: bilinen aileler, webhook/Telegram/indirme IOC'leri, etki sayıları, paket bilgisi
+      node: { families: node.families, iocs: node.iocs, effects: node.effects, package: node.package, file: node.file },
     },
+    // CLI unpack: kapsayıcı türü, meta ve notlar (pkg/nexe/SEA/jsc/npm-tgz/asar/zip)
+    unpack: unpack ? { kind: unpack.kind, meta: unpack.meta, notes: unpack.notes, file: unpack.file } : undefined,
     // shortcut: en fazla 300 string denenir (her biri XOR/Vigenère araması yapar); büyük çıktılarda örnekleme gerekirse artır
     encodings: encodingReport(after.strings.slice(0, 300)),
     apis: after.apis,
