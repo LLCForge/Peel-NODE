@@ -11,6 +11,7 @@ import { resolvePasses } from '../integrations/plugins.js';
 import { validOrder } from '../analysis/passgraph.js';
 import { restoreCheckpoint } from '../analysis/trace.js';
 import { salvage } from '../analysis/salvage.js';
+import { resolveEnv, detectEnv, withEnv } from '../sandbox/env.js';
 
 // js-confuser high (pack + iç içe CFF) katman katman açılır: büyük çekimler 25 turu aşabilir; değişiklik durunca biter
 const MAX_ROUNDS = 40;
@@ -34,6 +35,8 @@ export async function deobfuscate(input, {
   plugins = [],
   trace = null, resume = null, passOrder = null,
   naming = {}, format = 'default',
+  // env: 'auto' | 'node' | 'browser' — sandbox çalışma ortamı (auto: Node işaretleri varsa Node öykünmesi)
+  env = 'auto',
 } = {}) {
   // izleyici log satırlarını pass gerekçesi olarak toplar (E558)
   if (trace) { const base = onLog; onLog = (m, lv) => { trace.log(m, lv); base(m, lv); }; }
@@ -68,7 +71,10 @@ export async function deobfuscate(input, {
   const findings = { vm: [], sm: [], strings: [] };
   // madde 27: VM pass'inin concolic çoklu yol keşfi için çözücü bağdaştırıcısı (çalıştırma başına bir kez)
   // naming: ad haritası/sözlük ve okunabilirlik seçenekleri; source: metin katmanları açılmış girdi (yorum geri yükleme)
-  const ctx = { onLog, bump, level, sandbox, ctx: null, findings, naming, source: null, solver: sandbox ? createVmSolver(sandbox) : null };
+  // Node öykünmesi: tüm sandbox istekleri ortam yapılandırmasıyla gider (kendi kaynağı fs.readFileSync(__filename) için)
+  let envName = resolveEnv(env, input);
+  if (sandbox) sandbox = withEnv(sandbox, envName, { source: input });
+  const ctx = { onLog, bump, level, sandbox, env: envName, ctx: null, findings, naming, source: null, solver: sandbox ? createVmSolver(sandbox) : null };
   // E720: doğrulama seviyesi — parse her zaman; behaviour = console; effects ve üstü = console + gözlenebilir etkiler
   const vLevel = verifyLevel ?? (deep ? getSettings().verifyLevel : 'parse');
   const behaviourCheck = deep && !['none', 'parse'].includes(vLevel);
@@ -107,12 +113,19 @@ export async function deobfuscate(input, {
     tick();
   }
 
+  // metin katmanı (eval(atob(...)) vb.) Node kodunu ortaya çıkardıysa ortam yeniden seçilir
+  if (sandbox && env === 'auto' && envName === 'browser' && text !== input && detectEnv(text) === 'node') {
+    envName = 'node';
+    sandbox = withEnv(sandbox, envName, { source: input });
+    Object.assign(ctx, { sandbox, env: envName, solver: createVmSolver(sandbox) });
+    onLog('Node ortamı seçildi (metin katmanı açıldıktan sonra)', 'info');
+  }
   ctx.source = text;
   let code;
   try {
     code = resumed ? resumed.code : raw(parse(text));
   } catch (e) {
-    return { code: text, stats, events, text, error: e.message, findings };
+    return { code: text, stats, events, text, error: e.message, findings, env: envName };
   }
   onSnapshot({ id: 'girdi', round: 0, code });
   trace?.start(code, astPasses);
@@ -240,5 +253,5 @@ export async function deobfuscate(input, {
   const out = await pretty(code, format);
   onProgress(100);
   // text: metin katmanları açıldıktan sonraki program; rapor çalışma anı analizini bunun üzerinde yapar
-  return { code: out, stats, events, text, verified: Boolean(baseline), verifyLevel: baseline ? (effectsCheck ? 'effects' : 'behaviour') : 'parse', findings };
+  return { code: out, stats, events, text, verified: Boolean(baseline), verifyLevel: baseline ? (effectsCheck ? 'effects' : 'behaviour') : 'parse', findings, env: envName };
 }

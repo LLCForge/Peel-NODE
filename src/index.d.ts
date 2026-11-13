@@ -67,6 +67,8 @@ export interface DeobfuscateOptions {
   onProgress?: (percent: number) => void;
   onPass?: (id: string, state: PassState) => void;
   onSnapshot?: (snapshot: Snapshot) => void;
+  /** sandbox ortamı: 'auto' (varsayılan; Node işaretleri varsa Node öykünmesi), 'node' ya da 'browser' */
+  env?: 'auto' | 'node' | 'browser';
 }
 
 export interface DeobfuscateResult {
@@ -75,6 +77,8 @@ export interface DeobfuscateResult {
   events: PassEvent[];
   text: string;
   verified?: boolean;
+  /** seçilen sandbox ortamı */
+  env?: 'node' | 'browser';
   error?: string;
 }
 
@@ -103,7 +107,7 @@ export interface AnalysisReport {
 
 export function createSandbox(): Promise<Sandbox>;
 export function deobfuscate(input: string, options?: DeobfuscateOptions): Promise<DeobfuscateResult>;
-export function analyze(o: { input: string; output: string; text?: string; events?: PassEvent[]; sandbox?: boolean | Sandbox | null; config?: unknown }): Promise<AnalysisReport>;
+export function analyze(o: { input: string; output: string; text?: string; events?: PassEvent[]; sandbox?: boolean | Sandbox | null; config?: unknown; env?: 'auto' | 'node' | 'browser' }): Promise<AnalysisReport>;
 export function peel(input: string, options?: DeobfuscateOptions): Promise<DeobfuscateResult & { report: AnalysisReport | null }>;
 export function passes(): Array<{ id: string; level: number; kind: 'ast' | 'text'; needs: null | 'sandbox' }>;
 

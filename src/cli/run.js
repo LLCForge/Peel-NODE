@@ -44,6 +44,7 @@ export const RUN_SPEC = {
   json: { type: 'bool' },
   quiet: { alias: 'q', type: 'bool' },
   level: { alias: 'l', type: 'number' },
+  env: { type: 'string' },
   sandbox: { type: 'bool' },
   deep: { type: 'bool' },
   style: { type: 'string' },
@@ -290,6 +291,7 @@ async function processOne(item, o, ctx) {
     // ad haritası (88) önce sözlük gibi uygulanır; proje dosyasının adları (renames) ayrıca aşağıda
     naming: { names: ctx.names ?? {}, lang: o.lang === 'en' ? 'en' : 'tr' },
     format: o.format ?? 'default',
+    env: o.env ?? 'auto',
   });
   // E32 / E33: daha iyi doğrulanmış sonuç bulunursa çıktı onunla değişir (rapor ilk çalıştırmanın metin katmanını kullanır)
   if (!r.error && o.orderSearch) {
@@ -324,7 +326,7 @@ async function processOne(item, o, ctx) {
   const needReport = o.report || o.sarif || o.html || o.failOn || o.json || o.semgrep || o.incident;
   let report = null;
   if (needReport) {
-    report = await analyze({ input, text: r.text, output: code, events: r.events, sandbox, trace, stats: r.stats, verified: r.verified, findings: r.findings, unpack: item.unpack ?? null });
+    report = await analyze({ input, text: r.text, output: code, events: r.events, sandbox, trace, stats: r.stats, verified: r.verified, findings: r.findings, env: r.env, unpack: item.unpack ?? null });
     report.stats = r.stats;
     // sembolik rapor pahalı: yalnızca JSON rapor istendiğinde hesaplanır
     report.symbolic = o.report || o.json ? await report.symbolic() : undefined;
@@ -448,6 +450,7 @@ Seçenekler / Options:
       --vm-out <dizin>       bytecode VM'lerin bytecode/ISA, assembly, IR ve çevrilmiş kodunu yaz
       --jsvmp                jsvmp modu: yalnızca VM pass'leri, stderr'e handler ve disassembly özeti
   -l, --level <1-4>          pass seviyesi (varsayılan 4)
+      --env <auto|node|browser> sandbox ortamı (varsayılan auto: Node işaretleri varsa Node öykünmesi)
       --no-sandbox           sandbox kullanma (yalnızca statik pass'ler)
       --no-deep              pass başına davranış doğrulamasını kapat
       --style <auto|dizin>   .prettierrc/.editorconfig/.eslintrc kurallarına uy
@@ -506,8 +509,10 @@ export async function runCommand(argv) {
     names: opts.names,
     format: opts.format,
     dts: opts.dts,
+    env: opts.env ?? cfg.env,
   };
-  if (o.format && !Object.hasOwn(FORMAT_PROFILES, o.format)) throw new UsageError(`--format: ${Object.keys(FORMAT_PROFILES).join('|')}`);
+  if (o.env !== undefined && !['auto', 'node', 'browser'].includes(o.env)) throw new UsageError('--env auto|node|browser olmalı');
+  if (o.format &&!Object.hasOwn(FORMAT_PROFILES, o.format)) throw new UsageError(`--format: ${Object.keys(FORMAT_PROFILES).join('|')}`);
   if (o.level !== undefined && ![1, 2, 3, 4].includes(o.level)) throw new UsageError('--level 1-4 olmalı');
   if (o.failOn && !RISK_ORDER.slice(1).includes(o.failOn)) throw new UsageError('--fail-on low|medium|high olmalı');
   if (o.profile && o.profile !== 'auto' && !Object.hasOwn(PROFILES, o.profile)) throw new UsageError(`--profile: ${Object.keys(PROFILES).join(', ')}, auto`);

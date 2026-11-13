@@ -16,6 +16,7 @@ import { analyzeStringTables, crossCheck, serializeTables } from './vm/strtable.
 import { namingReport } from '../naming/index.js';
 import { engineReport } from './engine-report.js';
 import { nodeThreatReport } from '../node/threat.js';
+import { resolveEnv, withEnv } from '../sandbox/env.js';
 
 // Çözülmüş kod hakkında rapor: obfuscator tespiti, IOC'ler, şüpheli API'ler, ağ çağrıları,
 // fingerprint okumaları ve kalite metrikleri. Statik kısım AST'den, dinamik kısım sandbox'tan gelir.
@@ -198,7 +199,9 @@ async function stringTables(code, sandbox) {
   }
 }
 
-export async function analyze({ input, text, output, events = [], sandbox = null, config = null, stats = null, trace = null, verified = false, findings = null, unpack = null }) {
+export async function analyze({ input, text, output, events = [], sandbox = null, config = null, stats = null, trace = null, verified = false, findings = null, env = 'auto', unpack = null }) {
+  // Node öykünmesi (src/sandbox/node-stubs.js): etki türleri node.* ve __peelNet kayıtları runtime bölümlerine düşer
+  sandbox = withEnv(sandbox, resolveEnv(env, input, text), { source: input });
   const before = staticScan(text ?? input);
   const after = staticScan(output);
   const runtime = await runtimeScan(sandbox, text ?? input, config);

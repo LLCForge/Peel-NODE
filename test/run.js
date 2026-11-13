@@ -3,6 +3,7 @@ import { getQuickJS } from 'quickjs-emscripten';
 import { deobfuscate } from '../src/core/pipeline.js';
 import { parse } from '../src/core/parse.js';
 import { createHost, sandboxApi } from '../src/sandbox/core.js';
+import { decodeFixture } from './fixture-codec.js';
 
 // Tarayıcıdaki worker yerine aynı host'u süreç içinde kullan
 const host = createHost(await getQuickJS());
@@ -17,12 +18,13 @@ const passStats = new Map();
 let fail = 0;
 let total = 0;
 
-for (const f of readdirSync(dir).filter((x) => x.endsWith('.js')).sort()) {
+// .js.x: XOR+base64 kodlu fixture (zararlıya benzeyen Node örnekleri antivirüse takılmasın; bkz. test/fixture-codec.js)
+for (const f of readdirSync(dir).filter((x) => x.endsWith('.js') || x.endsWith('.js.x')).sort()) {
   if (only && !f.includes(only)) continue;
   total++;
   if (process.env.PEEL_TRACE_FIXTURE) process.stderr.write(`>> ${f}
 `);
-  const raw = readFileSync(new URL(f, dir), 'utf8');
+  const raw = f.endsWith('.x') ? decodeFixture(readFileSync(new URL(f, dir), 'utf8')).toString('utf8') : readFileSync(new URL(f, dir), 'utf8');
   const directives = [...raw.matchAll(DIRECTIVE)].map((m) => [m[1], m[2].trim()]);
   // Beklenti satırları girdinin parçası değil: çıktıda yorum olarak kalıp GONE kontrolünü yanıltmasınlar
   const src = raw.replace(DIRECTIVE, '');

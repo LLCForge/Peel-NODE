@@ -1,4 +1,5 @@
 import { fnv1a } from '../util/hash.js';
+import { NODE_OBSERVABLE } from '../sandbox/node-stubs.js';
 
 // Etki tabanlı doğrulama: dışarıdan gözlenebilir etkiler (E706), davranış parmak izi (E711), semantik hash (E712),
 // denklik sınıfı kümeleme (E713), hash tabanlı regresyon seçimi (E714), etki farkı motoru (E743/E715), iz denkliği (E708).
@@ -7,7 +8,7 @@ import { fnv1a } from '../util/hash.js';
 // amacıdır) ve zamanlayıcı kaydı (debug protection setInterval'ı kaldırılır) gözlenebilir sayılmaz.
 const OBSERVABLE = new Set(['console', 'net', 'storage.write', 'storage.remove', 'storage.clear', 'cookie.write', 'write',
   'dom', 'dialog', 'history', 'navigate', 'worker', 'worker.post', 'worker.reply', 'blob', 'listener', 'crypto',
-  'fingerprint', 'wasm', 'wasm.call']);
+  'fingerprint', 'wasm', 'wasm.call', ...NODE_OBSERVABLE]);
 
 export const observable = (effects = []) => effects.filter((e) => OBSERVABLE.has(e.kind));
 const key = (e) => `${e.kind}|${e.target}|${e.detail}`;

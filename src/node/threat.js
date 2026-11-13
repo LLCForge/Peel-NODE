@@ -38,9 +38,29 @@ export const NODE_EFFECT_KINDS = {
   'node.os': 'sysinfo',
   'node.clipboard': 'clipboard',
   'node.process.exit': 'exit',
+  // src/sandbox/node-stubs.js'in gerçek adları
+  'node.fs.delete': 'fsDelete',
+  'node.fs.list': 'fsRead',
+  'node.fs.open': 'fsRead',
+  'node.fs.watch': 'fsRead',
+  'node.fs.mkdir': 'fsWrite',
+  'node.fs.rename': 'fsWrite',
+  'node.fs.link': 'fsWrite',
+  'node.env.write': 'envRead',
+  'node.exit': 'exit',
+  'node.worker': 'exec',
 };
 
-export function effectCategory(kind) {
+// öykünme ağ çağrılarını tek "net" türüyle kaydeder, API hedeftedir (https.request, net.connect, dns.lookup)
+function netCategory(target) {
+  const t = String(target ?? '');
+  if (/^dns\b|lookup|resolve/.test(t)) return 'dns';
+  if (/^(https?|http2|fetch|undici)\b/.test(t)) return 'http';
+  return 'netConnect';
+}
+
+export function effectCategory(kind, target) {
+  if (kind === 'net') return netCategory(target);
   let k = String(kind ?? '');
   while (k) {
     if (Object.hasOwn(NODE_EFFECT_KINDS, k)) return NODE_EFFECT_KINDS[k];
@@ -55,7 +75,7 @@ export function effectCategory(kind) {
 export function groupEffects(effects = []) {
   const out = {};
   for (const e of effects ?? []) {
-    const c = effectCategory(e?.kind);
+    const c = effectCategory(e?.kind, e?.target);
     if (c) (out[c] ??= []).push(e);
   }
   return out;

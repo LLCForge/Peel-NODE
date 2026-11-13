@@ -35,6 +35,7 @@ export const PASS_DEPS = {
   integrity: { after: ['predecoders'], why: 'özet denetimleri kaynak metni değiştiren her AST pass\'inden önce açılmalı' },
   'iife-args': { after: ['literals'], why: 'jfogs önsözü normalleştirilmiş literal argümanlarla çalıştırılır' },
   'eval-inline': { after: ['runtime-decoders'], why: 'eval argümanı ancak string tablosu çözülünce sabit olur' },
+  'node-layers': { after: ['runtime-decoders'], why: 'vm/eval/_compile yerleri ancak string tablosu çözülünce tanınır' },
   rgf: { after: ['runtime-decoders'], why: 'RGF tablosundaki kod string\'leri çözülmüş olmalı' },
   'flat-fns': { after: ['confuser'], why: 'dispatcher açılınca flatten kabuğu doğrudan çağrıya döner' },
   webpack: { after: ['unused'], why: 'adlar ölü bağlamalar silindikten sonra geri verilir' },

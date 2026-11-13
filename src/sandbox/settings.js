@@ -76,7 +76,11 @@ export function toConfig(s) {
 // İsteğe ayarları uygular: yapılandırma verilmemişse ayarlardan gelir; sınırlar her isteğe uygulanır
 export function applySettings(msg, s) {
   const out = { ...msg };
-  if (out.config == null && ['run', 'batch', 'open'].includes(out.type)) out.config = toConfig(s);
+  if (['run', 'batch', 'open'].includes(out.type)) {
+    // yalnızca ortam seçimi taşıyan yapılandırma (withEnv) ayarların yerine geçmez, üstüne eklenir
+    if (out.config == null) out.config = toConfig(s);
+    else if (Object.keys(out.config).every((k) => k === 'env' || k === 'node')) out.config = { ...toConfig(s), ...out.config };
+  }
   if (s.memoryMB != null && ['run', 'batch', 'open'].includes(out.type)) out.memoryMB = s.memoryMB;
   if (s.timeoutMs != null && (out.type === 'run' || out.type === 'open')) out.timeoutMs = s.timeoutMs;
   return out;

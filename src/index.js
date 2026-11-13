@@ -79,7 +79,7 @@ export async function peel(input, options = {}) {
   const sb = await resolveSandbox(options.sandbox);
   const result = await deobfuscate(input, { ...options, sandbox: sb ?? false });
   if (result.error) return { ...result, report: null };
-  const report = await analyze({ input, text: result.text, output: result.code, events: result.events, sandbox: sb ?? false });
+  const report = await analyze({ input, text: result.text, output: result.code, events: result.events, sandbox: sb ?? false, env: result.env });
   return { ...result, report };
 }
 
