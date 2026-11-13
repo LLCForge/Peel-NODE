@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const env = process.env;
 const workspace = resolve(env.GITHUB_WORKSPACE ?? process.cwd());
-const cli = fileURLToPath(new URL('../bin/peel.js', import.meta.url));
+const cli = fileURLToPath(new URL('../bin/peel-node.js', import.meta.url));
 const RISKS = ['none', 'low', 'medium', 'high'];
 
 function fail(msg) {

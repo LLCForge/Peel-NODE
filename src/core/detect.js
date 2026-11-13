@@ -62,6 +62,15 @@ const TOOLS = [
   { name: 'UglifyJS / Terser', profile: 'minifier', tests: [[/^(?:!function\(|\(function\(\)\{)/, 'kısa IIFE başlangıcı', 15], [/(?:[;{}(,=]![01]\b)/g, '!0/!1 boolean', 20, 5], [/void 0/g, 'void 0', 15, 3], [/\b[a-z]\.[a-z]=\w+,/g, 'tek harfli zincir atamalar', 20, 10]] },
   { name: 'esbuild', profile: 'bundler', tests: [[/__defProp\s*=\s*Object\.defineProperty|__toESM|__commonJS\s*=/, 'esbuild yardımcıları (__toESM/__commonJS)', 90]] },
   { name: 'webpack', profile: 'bundler', tests: [[/__webpack_require__|webpackChunk|webpackJsonp/, 'webpack çalışma zamanı', 95]] },
+  // Node'a özgü paketleyiciler ve kapsayıcı izleri. Kapsayıcı işaretleri (pkg/nexe/SEA/bytenode) pass profilini
+  // değiştirmesin diye eşiğin (70) altında tutulur: çözme stratejisini değil, kökeni anlatırlar.
+  { name: 'ncc (@vercel/ncc)', profile: 'bundler', tests: [[/__nccwpck_require__/, '__nccwpck_require__ çalışma zamanı', 95], [/__nccwpck_require__\.ab\s*=/, 'ncc varlık kökü (.ab)', 20]] },
+  { name: 'webpack (Node hedefi)', profile: 'bundler', tests: [[/__non_webpack_require__/, '__non_webpack_require__', 50], [/module\.exports\s*=\s*__webpack_exports__/, 'CommonJS dışa aktarım (target: node)', 20]] },
+  { name: 'esbuild (Node platformu)', profile: 'bundler', tests: [[/var __require = \/\* @__PURE__ \*\/ \(\(x\) => typeof require !== "undefined"/, 'esbuild __require kalkanı', 50], [/module\.exports = __toCommonJS\(/, 'module.exports = __toCommonJS(...)', 40], [/require\("node:[a-z_]+"\)/, 'node: önekli yerleşik modüller', 10]] },
+  { name: 'pkg (vercel/yao-pkg) izi', profile: 'bundler', tests: [[/\bprocess\.pkg\b/, 'process.pkg denetimi', 40], [/PAYLOAD_POSITION|PKG_EXECPATH/, 'pkg prelude değişkenleri', 25], [/[\\/]snapshot[\\/]/, '/snapshot/ sanal yol', 10]] },
+  { name: 'nexe izi', profile: 'bundler', tests: [[/process\.__nexe\b/, 'process.__nexe', 50], [/<nexe~~sentinel>/, 'nexe sentinel', 20]] },
+  { name: 'Node SEA izi', profile: 'bundler', tests: [[/require\(["']node:sea["']\)/, 'node:sea modülü', 40], [/\bsea\.(?:isSea|getAsset|getAssetAsBlob|getRawAsset)\(/, 'sea.getAsset/isSea', 25]] },
+  { name: 'bytenode yükleyici', profile: 'bundler', tests: [[/require\(["']bytenode["']\)/, 'require("bytenode")', 45], [/\.jsc["']/, '.jsc dosyası yükleniyor', 15], [/runBytecode|compileFile\(|new\s+\w*\.?Script\([^)]*cachedData/, 'kod önbelleğinden çalıştırma', 10]] },
   { name: 'Rollup', profile: 'bundler', tests: [[/Object\.defineProperty\(exports,\s*['"]__esModule['"]|\(function \(global, factory\)/, 'Rollup UMD/CJS çerçevesi', 60]] },
   { name: 'Parcel', profile: 'bundler', tests: [[/parcelRequire|\$parcel\$/, 'parcelRequire', 95]] },
   { name: 'Browserify', profile: 'bundler', tests: [[/\(function\(\)\{function r\(e,n,t\)\{function o\(i,f\)/, 'browserify ön yükleyici', 95], [/typeof require=="function"&&require/, 'browserify require kontrolü', 50]] },

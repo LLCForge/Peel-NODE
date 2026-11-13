@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir, readdir, stat, access } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readdir, stat, access, open } from 'node:fs/promises';
 import { watch } from 'node:fs';
 import { spawn, execFileSync } from 'node:child_process';
 import { basename, dirname, join, relative, resolve, extname } from 'node:path';
@@ -32,6 +32,7 @@ import { toDts } from '../naming/types.js';
 import { parse } from '../core/parse.js';
 import { FORMAT_PROFILES } from '../core/emit.js';
 import { EXIT, getSandbox, makeLogger, readInput, readJson } from './common.js';
+import { unpack, isContainer, isScriptPath } from '../node/unpack.js';
 
 export const RUN_SPEC = {
   out: { alias: 'o', type: 'string' },
@@ -134,13 +135,61 @@ export async function loadConfig(explicit) {
   return out;
 }
 
-async function expandInputs(list) {
+// pkg/nexe/SEA ikilileri ~100 MB olabilir: kapsayıcılar için ayrı (daha yüksek) sınır
+const MAX_CONTAINER = 512 * 1024 * 1024;
+
+// Arşivden gelen yol çıktı dizininin dışına çıkamaz: "..", sürücü harfi ve mutlak kök atılır
+export function safeRel(p) {
+  const parts = String(p).replace(/\\/g, '/').split('/').filter((x) => x && x !== '.' && x !== '..').map((x) => x.replace(/[:*?"<>|\0]/g, '_'));
+  return parts.join('/') || 'file';
+}
+
+async function readHead(path, n = 64) {
+  const fh = await open(path, 'r');
+  try {
+    const buf = Buffer.alloc(n);
+    const { bytesRead } = await fh.read(buf, 0, n, 0);
+    return new Uint8Array(buf.subarray(0, bytesRead));
+  } finally {
+    await fh.close();
+  }
+}
+
+/** Kapsayıcıyı (.exe/.tgz/.jsc/.asar/.zip) açar: her çözülebilir JS dosyası ayrı girdi olur */
+export async function expandContainer(p, size, containers) {
+  if (size > MAX_CONTAINER) throw new UsageError(`Dosya çok büyük: ${p}`);
+  const r = await unpack(new Uint8Array(await readFile(p)), basename(p));
+  const root = `${basename(p)}.unpacked`;
+  containers.push({
+    source: p,
+    kind: r.kind,
+    meta: r.meta,
+    notes: r.notes,
+    root,
+    files: r.files.map((f) => ({ path: f.path, entry: Boolean(f.entry), note: f.note, size: f.code !== null ? f.code.length : f.bytes?.length ?? 0, text: f.code !== null })),
+    // JS dışı metin dosyaları (package.json vb.) --out-dir'e aynen yazılır; ikili dosyalar yazılmaz
+    extra: r.files.filter((f) => f.code !== null && !isScriptPath(f.path)).map((f) => ({ rel: `${root}/${safeRel(f.path)}`, code: f.code })),
+  });
+  // giriş dosyaları önce: rapor ve günlükte ilk görünsünler
+  return r.files.filter((f) => f.code !== null && isScriptPath(f.path)).sort((a, b) => Number(Boolean(b.entry)) - Number(Boolean(a.entry))).map((f) => ({
+    path: `${p}!/${f.path}`,
+    rel: `${root}/${safeRel(f.path)}`,
+    input: f.code,
+    unpack: { kind: r.kind, meta: r.meta, notes: r.notes, file: { path: f.path, entry: Boolean(f.entry), note: f.note ?? null } },
+  }));
+}
+
+async function expandInputs(list, containers = []) {
   const out = [];
   for (const p of list) {
     if (p === '-') { out.push({ path: '-', rel: 'stdin.js' }); continue; }
     const s = await stat(p).catch(() => null);
     if (!s) throw new UsageError(`Bulunamadı: ${p}`);
-    if (s.isFile()) { out.push({ path: p, rel: basename(p) }); continue; }
+    if (s.isFile()) {
+      if (isContainer(await readHead(p), p)) out.push(...await expandContainer(p, s.size, containers));
+      else out.push({ path: p, rel: basename(p) });
+      continue;
+    }
     const walk = async (dir) => {
       for (const e of await readdir(dir, { withFileTypes: true })) {
         if (e.name === 'node_modules' || e.name.startsWith('.')) continue;
@@ -253,6 +302,7 @@ async function processOne(item, o, ctx) {
     r = { ...r, code: c.code };
   }
   const result = { file: item.path, ok: !r.error, verified: r.verified ?? false, stats: r.stats };
+  if (item.unpack) result.unpack = { kind: item.unpack.kind, path: item.unpack.file.path, entry: item.unpack.file.entry, note: item.unpack.file.note };
   if (r.error) {
     result.error = r.error;
     log(`${item.path}: parse hatası: ${r.error}`, 'err');
@@ -274,7 +324,7 @@ async function processOne(item, o, ctx) {
   const needReport = o.report || o.sarif || o.html || o.failOn || o.json || o.semgrep || o.incident;
   let report = null;
   if (needReport) {
-    report = await analyze({ input, text: r.text, output: code, events: r.events, sandbox, trace, stats: r.stats, verified: r.verified, findings: r.findings });
+    report = await analyze({ input, text: r.text, output: code, events: r.events, sandbox, trace, stats: r.stats, verified: r.verified, findings: r.findings, unpack: item.unpack ?? null });
     report.stats = r.stats;
     // sembolik rapor pahalı: yalnızca JSON rapor istendiğinde hesaplanır
     report.symbolic = o.report || o.json ? await report.symbolic() : undefined;
@@ -369,7 +419,13 @@ async function processOne(item, o, ctx) {
 }
 
 export const RUN_HELP = `Kullanım / Usage:
-  peel <girdi.js|dizin|-> [...] [seçenekler]
+  peel-node <girdi.js|dizin|-> [...] [seçenekler]
+  peel-node <uygulama.exe|paket.tgz|kod.jsc|app.asar|arşiv.zip> --out-dir <dizin>
+
+Kapsayıcılar / Containers:
+  pkg, nexe ve Node SEA ikilileri, npm .tgz, Electron .asar ve .zip önce bellekte açılır, içindeki her JS
+  dosyası çözülür (çıktı dizininde <ad>.unpacked/ altında yapı korunur). <ad>.unpack.json: tür, meta, notlar.
+  V8 bytecode (bytenode .jsc, pkg varsayılanı) kaynağa çevrilemez: yalnızca başlık ve dizgeler raporlanır.
 
 Seçenekler / Options:
   -o, --out <dosya>          çıktı dosyası (tek girdi; varsayılan stdout)
@@ -467,8 +523,14 @@ export async function runCommand(argv) {
     o.deep ??= project.options.deep;
     items = project.files.map((f) => ({ path: f.name, rel: f.name, input: f.input, renames: f.renames }));
   }
-  if (positional.length) items = await expandInputs(positional);
-  if (!items?.length) { console.error(RUN_HELP); return EXIT.USAGE; }
+  const containers = [];
+  if (positional.length) items = await expandInputs(positional, containers);
+  for (const c of containers) {
+    log(`${c.source}: ${c.kind}, ${c.files.length} dosya, ${c.files.filter((f) => f.text && isScriptPath(f.path)).length} çözülebilir JS`, 'info');
+    for (const n of c.notes) log(`${c.source}: ${n}`, 'warn');
+  }
+  items ??= [];
+  if (!items.length && !containers.length) { console.error(RUN_HELP); return EXIT.USAGE; }
 
   const batch = items.length > 1;
   if (batch && opts.out) throw new UsageError('Birden çok girdide -o yerine --out-dir kullanın');
@@ -507,7 +569,26 @@ export async function runCommand(argv) {
   };
 
   const results = await runAll(items);
-  if (o.json) process.stdout.write(`${JSON.stringify(batch ? results : results[0], null, 2)}\n`);
+  // kapsayıcı özetleri: --out-dir'de <ad>.unpack.json (+ JS dışı metin dosyaları), --json'da sonuç listesinde
+  const manifests = containers.map(({ extra, ...m }) => m);
+  if (o.outDir) {
+    for (const [i, c] of containers.entries()) {
+      for (const f of c.extra) {
+        const target = join(o.outDir, f.rel);
+        await mkdir(dirname(target), { recursive: true });
+        await writeFile(target, f.code);
+      }
+      await mkdir(o.outDir, { recursive: true });
+      await writeFile(join(o.outDir, `${basename(c.source)}.unpack.json`), JSON.stringify(manifests[i], null, 2));
+    }
+  }
+  if (o.json) {
+    const all = [...results, ...manifests.map((m) => ({ file: m.source, ok: true, unpack: m }))];
+    process.stdout.write(`${JSON.stringify(all.length > 1 ? all : all[0], null, 2)}\n`);
+  } else if (!items.length && !o.outDir) {
+    // çözülecek JS yok (ör. yalnızca V8 bytecode): kapsayıcı özeti stdout'a
+    process.stdout.write(`${JSON.stringify(manifests.length > 1 ? manifests : manifests[0], null, 2)}\n`);
+  }
 
   if (opts['save-project']) {
     let p = project ?? createProject({ name: basename(opts['save-project'], '.peel'), options: { level: o.level ?? 4, sandbox: o.sandbox !== false, deep: o.deep !== false } });
