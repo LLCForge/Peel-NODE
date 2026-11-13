@@ -149,6 +149,8 @@ globalThis.sessionStorage = globalThis.localStorage;
 globalThis.__peelDyn = [];
 function __peelDynCode(via, code) {
   if (typeof code !== "string") return;
+  // Node vm/module taklitleri kodu kendi adlarıyla zaten kaydetti: aynı kodun eval/Function sarmalayıcı kaydı atlanır
+  if (globalThis.__peelDynSkip === code) { globalThis.__peelDynSkip = null; return; }
   if (__peelDyn.length < 100) __peelDyn.push({ via: via, code: code.slice(0, 20000), length: code.length });
   __peelFx("eval", via, code);
 }

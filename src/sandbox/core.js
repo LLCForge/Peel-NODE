@@ -1,6 +1,8 @@
 import { STUBS } from './stubs.js';
 import { SEMANTIC_STUBS } from './semantics-stubs.js';
 import { hostIntl, hostTzOffset, hostTzName } from './host-intl.js';
+import { NODE_STUBS } from './node-stubs.js';
+import { nodeBridge } from './node-bridge.js';
 
 const MAX_CONTEXTS = 4;
 const TELEMETRY_MAX = 200;
@@ -113,7 +115,8 @@ export function createHost(QuickJS, options = {}) {
       fn.dispose();
     }
     // Intl ve IANA saat dilimi verisi QuickJS'te yok: host Intl'ine senkron köprü (yalnızca string alır/verir)
-    const bridges = { __peelHostIntl: hostIntl, __peelHostTz: (z, ms) => hostTzOffset(z, Number(ms)), __peelHostTzName: (z, ms) => hostTzName(z, Number(ms)) };
+    // __peelHostNode: Node taklitlerinin (zlib/crypto) saf hesap köprüsü — string alır, JSON string verir
+    const bridges = { __peelHostIntl: hostIntl, __peelHostTz: (z, ms) => hostTzOffset(z, Number(ms)), __peelHostTzName: (z, ms) => hostTzName(z, Number(ms)), __peelHostNode: nodeBridge };
     for (const [name, f] of Object.entries(bridges)) {
       const fn = vm.newFunction(name, (...args) => vm.newString(f(...args.map((x) => String(vm.dump(x))))));
       vm.setProp(vm.global, name, fn);
@@ -126,6 +129,11 @@ export function createHost(QuickJS, options = {}) {
     if (!s.ok) { dispose(); throw new Error(`stubs: ${s.error}`); }
     const sm = evalRaw(SEMANTIC_STUBS, 2000);
     if (!sm.ok) { dispose(); throw new Error(`semantic stubs: ${sm.error}`); }
+    // Node ortamı: tarayıcı global'lerini kaldırır, require/process/Buffer... kurar (eklentiler son ortamı görsün)
+    if (config?.env === 'node') {
+      const nd = evalRaw(NODE_STUBS, 4000);
+      if (!nd.ok) { dispose(); throw new Error(`node stubs: ${nd.error}`); }
+    }
     const all = [...hostPlugins, ...plugins];
     for (const p of all) {
       if (!p.prelude) continue;

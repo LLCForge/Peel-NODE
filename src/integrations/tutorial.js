@@ -225,6 +225,10 @@ export const PASS_DOCS = {
     tr: 'obfuscator.io string dizisini ofset, kodlama ve rotasyonu statik çözerek sandbox olmadan açar.',
     en: 'Decodes the obfuscator.io string array without a sandbox by solving offset, encoding and rotation statically.',
   },
+  'node-layers': {
+    tr: 'Node: vm.runInThisContext, eval, Function, Module._compile ve fs ile yazılıp require edilen katmanları çalıştırıp, dış girdiden bağımsızsa deyim olarak yerine yazar.',
+    en: 'Node: runs vm.runInThisContext, eval, Function, Module._compile and fs-written required layers and inlines them as statements when independent of external input.',
+  },
   'eval-inline': {
     tr: 'Fonksiyonun tek deyimi olan sabit eval("…") kodunu (webpack eval devtool) fonksiyon gövdesine yerleştirir.',
     en: 'Inlines a constant eval("…") that is a function\'s only statement (webpack eval devtool) into the body.',

@@ -10,6 +10,7 @@ import * as stringArray from '../passes/30-string-array.js';
 import * as runtimeDecoders from '../passes/35-runtime-decoders.js';
 import * as runtimeFunctions from '../passes/36-runtime-functions.js';
 import * as evalInline from '../passes/38-eval-inline.js';
+import * as nodeLayers from '../passes/38-node-layers.js';
 import * as rgf from '../passes/39-rgf.js';
 import * as flatFns from '../passes/47-flat-fns.js';
 import * as cffScope from '../passes/46-cff-scope.js';
@@ -76,6 +77,7 @@ export const PASSES = [
   { id: 'string-array', level: 2, kind: 'ast',  needs: 'sandbox', mod: stringArray },
   { id: 'runtime-decoders', level: 2, kind: 'ast', needs: 'sandbox', mod: runtimeDecoders },
   { id: 'runtime-functions', level: 3, kind: 'ast', needs: 'sandbox', mod: runtimeFunctions },
+  { id: 'node-layers',  level: 1, kind: 'ast',  needs: 'sandbox', mod: nodeLayers },
   { id: 'eval-inline',  level: 2, kind: 'ast',  needs: null,      mod: evalInline },
   { id: 'rgf',          level: 2, kind: 'ast',  needs: null,      mod: rgf },
   { id: 'confuser',     level: 2, kind: 'ast',  needs: null,      mod: confuser },
